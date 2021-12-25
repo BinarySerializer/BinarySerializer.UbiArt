@@ -1,0 +1,2 @@
+# BinarySerializer.UbiArt
+BinarySerializer.UbiArt is an extension library to [BinarySerializer](https://github.com/RayCarrot/BinarySerializer). It supports serializing formats from the UbiArt games, such as Rayman Origins and Legends.
