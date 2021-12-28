@@ -13,7 +13,7 @@
         public byte[] Bytes_00 { get; set; }
         public bool Bool_0210 { get; set; }
         public Ray_PersistentGameData_Universe SaveData { get; set; }
-        public byte[] RemainingBytes { get; set; }
+        public byte[] Footer { get; set; }
 
         #endregion
 
@@ -24,7 +24,7 @@
             Bytes_00 = s.SerializeArray<byte>(Bytes_00, 528, name: nameof(Bytes_00));
             Bool_0210 = s.SerializeUbiArtBool(Bool_0210, name: nameof(Bool_0210));
             SaveData = s.SerializeObject<Ray_PersistentGameData_Universe>(SaveData, name: nameof(SaveData));
-            RemainingBytes = s.SerializeArray<byte>(RemainingBytes, s.CurrentLength - s.CurrentFileOffset, name: nameof(RemainingBytes));
+            Footer = s.SerializeArray<byte>(Footer, 288, name: nameof(Footer));
         }
 
         #endregion
