@@ -1,9 +1,13 @@
-﻿using System.Text;
+﻿using System.ComponentModel;
+using System.Text;
 
 namespace BinarySerializer.UbiArt
 {
+    [TypeConverter(typeof(String8Converter))]
     public class String8 : UbiArtString
     {
+        protected override int CharSize => 1;
+
         /// <summary>
         /// Creates a new <see cref="String8"/> from a <see cref="string"/>
         /// </summary>

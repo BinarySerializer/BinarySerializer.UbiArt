@@ -4,6 +4,8 @@ namespace BinarySerializer.UbiArt
 {
     public abstract class UbiArtString : BinarySerializable
     {
+        protected abstract int CharSize { get; }
+
         public string Value { get; set; }
 
         /// <summary>
@@ -18,13 +20,13 @@ namespace BinarySerializer.UbiArt
             int length = 0;
 
             if (Value != null)
-                length = encoding.GetByteCount(Value);
+                length = encoding.GetByteCount(Value) / CharSize;
 
             // Serialize the length
             length = s.Serialize<int>(length, name: $"{nameof(Value)}.Length");
 
             // Serialize the string
-            Value = s.SerializeString(Value, length, encoding, name: nameof(Value));
+            Value = s.SerializeString(Value, length * CharSize, encoding, name: nameof(Value));
         }
     }
 }
