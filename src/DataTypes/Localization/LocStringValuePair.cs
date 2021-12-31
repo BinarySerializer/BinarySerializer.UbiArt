@@ -4,7 +4,7 @@
     /// Localization string value pair for UbiArt games
     /// </summary>
     public class LocStringValuePair<UAString> : BinarySerializable
-        where UAString : UbiArtString, new()
+        where UAString : BinarySerializable, new()
     {
         /// <summary>
         /// The localization key
