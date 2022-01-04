@@ -3,7 +3,7 @@
     /// <summary>
     /// Localization string value pair for UbiArt games
     /// </summary>
-    public class LocStringValuePair<UAString> : BinarySerializable
+    public class LocTextValuePair<UAString> : BinarySerializable
         where UAString : BinarySerializable, new()
     {
         /// <summary>

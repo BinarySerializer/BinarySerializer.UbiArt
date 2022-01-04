@@ -3,7 +3,7 @@
     /// <summary>
     /// UbiArt localization audio data
     /// </summary>
-    public class LocalizationAudio<UAString> : BinarySerializable
+    public class LocAudio<UAString> : BinarySerializable
         where UAString : UbiArtString, new()
     {
         /// <summary>
