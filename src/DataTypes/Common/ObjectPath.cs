@@ -8,7 +8,7 @@
 
         public override void SerializeImpl(SerializerObject s)
         {
-            if (s.GetSettings<UbiArtSettings>().EngineVersion == EngineVersion.RaymanOrigins)
+            if (s.GetSettings<UbiArtSettings>().Game == Game.RaymanOrigins)
             {
                 Id = s.SerializeObject<String8>(Id, name: nameof(Id));
             }

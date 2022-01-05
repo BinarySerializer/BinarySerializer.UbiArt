@@ -1,6 +1,6 @@
 ﻿namespace BinarySerializer.UbiArt
 {
-    public enum EngineVersion
+    public enum Game
     {
         #region Rayman
 

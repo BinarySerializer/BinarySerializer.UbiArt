@@ -12,12 +12,12 @@ namespace BinarySerializer.UbiArt
         /// Default constructor
         /// </summary>
         /// <param name="displayName">The game mode display name</param>
-        /// <param name="engineVersion">The game engine version</param>
+        /// <param name="game">The game engine version</param>
         /// <param name="platform">The platform</param>
-        public GameModeInfoAttribute(string displayName, EngineVersion engineVersion, Platform platform)
+        public GameModeInfoAttribute(string displayName, Game game, Platform platform)
         {
             DisplayName = displayName;
-            EngineVersion = engineVersion;
+            Game = game;
             Platform = platform;
         }
 
@@ -30,7 +30,7 @@ namespace BinarySerializer.UbiArt
         /// <summary>
         /// The game engine version
         /// </summary>
-        public EngineVersion EngineVersion { get; }
+        public Game Game { get; }
 
         /// <summary>
         /// The platform

@@ -57,11 +57,11 @@
         /// <summary>
         /// Default constructor
         /// </summary>
-        /// <param name="engineVersion">The engine version</param>
+        /// <param name="game">The game</param>
         /// <param name="platform">The platform</param>
-        public UbiArtSettings(EngineVersion engineVersion, Platform platform)
+        public UbiArtSettings(Game game, Platform platform)
         {
-            EngineVersion = engineVersion;
+            Game = game;
             Platform = platform;
         }
 
@@ -70,16 +70,16 @@
         #region Public Methods
 
         /// <summary>
-        /// The engine version
+        /// The game
         /// </summary>
-        public EngineVersion EngineVersion { get; }
+        public Game Game { get; }
 
         /// <summary>
         /// The platform
         /// </summary>
         public Platform Platform { get; }
 
-        public Endian GetEndian => EngineVersion == EngineVersion.RaymanOrigins && Platform == Platform.Nintendo3DS ? Endian.Little : Endian.Big;
+        public Endian GetEndian => Game == Game.RaymanOrigins && Platform == Platform.Nintendo3DS ? Endian.Little : Endian.Big;
 
         #endregion
     }
