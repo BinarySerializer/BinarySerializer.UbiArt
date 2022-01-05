@@ -79,6 +79,8 @@
         /// </summary>
         public Platform Platform { get; }
 
+        public Endian GetEndian => EngineVersion == EngineVersion.RaymanOrigins && Platform == Platform.Nintendo3DS ? Endian.Little : Endian.Big;
+
         #endregion
     }
 }
