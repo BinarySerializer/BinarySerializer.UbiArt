@@ -5,6 +5,11 @@
     /// </summary>
     public class FiestaRun_SaveData : BinarySerializable
     {
+        /// <summary>
+        /// Indicates if the save data version is after to the Christmas update if on version 1
+        /// </summary>
+        public bool Pre_IsVersion1AfterChristmasUpdate { get; set; }
+
         public ushort Version { get; set; } // 1-2
         
         public FiestaRun_SaveDataLevel[] LevelInfos_Land1 { get; set; } // Normal levels
@@ -12,8 +17,8 @@
         
         public uint LumsGlobalCounter { get; set; }
         
-        public FiestaRun_ShopItems<ushort> ShopItems_1 { get; set; }
-        public FiestaRun_ShopItems<ushort> ShopItems_2 { get; set; }
+        public FiestaRun_ShopItems<ushort> ShopItems_1 { get; set; } // Gallery
+        public FiestaRun_ShopItems<ushort> ShopItems_2 { get; set; } // Heroes
         public FiestaRun_ShopItems<byte> ShopItems_3 { get; set; }
 
         public bool IsAllLevelsLocked { get; set; }
@@ -83,26 +88,29 @@
             // TODO: Old counts don't match with Windows Preload Edition (version 1)
             ShopItems_1 = s.SerializeObject<FiestaRun_ShopItems<ushort>>(ShopItems_1, x =>
             {
+                x.Pre_Version = Version;
                 x.Pre_Count = 15;
-                x.Pre_HasHeroes = true;
+                x.Pre_HasStates = true;
                 x.Pre_HasUnknownItems = true;
                 x.Pre_OldCount = 12;
                 x.Pre_StartIndex = 0;
             }, name: nameof(ShopItems_1));
             ShopItems_2 = s.SerializeObject<FiestaRun_ShopItems<ushort>>(ShopItems_2, x =>
             {
+                x.Pre_Version = Version;
                 x.Pre_Count = 12;
-                x.Pre_HasHeroes = true;
+                x.Pre_HasStates = true;
                 x.Pre_HasUnknownItems = true;
                 x.Pre_OldCount = 9;
                 x.Pre_StartIndex = 0;
             }, name: nameof(ShopItems_2));
             ShopItems_3 = s.SerializeObject<FiestaRun_ShopItems<byte>>(ShopItems_3, x =>
             {
+                x.Pre_Version = Version;
                 x.Pre_Count = 8;
-                x.Pre_HasHeroes = false;
+                x.Pre_HasStates = false;
                 x.Pre_HasUnknownItems = true;
-                x.Pre_OldCount = 100;
+                x.Pre_OldCount = 8; // Game sets 100 here which is wrong (but doesn't matter since HasStates is false)
                 x.Pre_StartIndex = 0;
             }, name: nameof(ShopItems_3));
 
@@ -148,6 +156,11 @@
             if (s.Serialize<byte>(172, name: "SaveCheck") != 172)
                 throw new BinarySerializableException(this, "Save check value is invalid");
 
+            // Versions prior to the Christmas update do not have the following value even though the version remains at 1. In the game
+            // reading past the end of the file will return 0, thus it defaults to false there.
+            if (Version == 1 && !Pre_IsVersion1AfterChristmasUpdate)
+                return;
+
             NoelPopUp = s.Serialize<bool>(NoelPopUp, name: nameof(NoelPopUp));
 
             if (Version >= 2)
@@ -174,10 +187,11 @@
 
                 ShopItems_4 = s.SerializeObject<FiestaRun_ShopItems<ushort>>(ShopItems_4, x =>
                 {
+                    x.Pre_Version = Version;
                     x.Pre_Count = 16;
-                    x.Pre_HasHeroes = true;
+                    x.Pre_HasStates = true;
                     x.Pre_HasUnknownItems = true;
-                    x.Pre_OldCount = 100;
+                    x.Pre_OldCount = 100; // Default value
                     x.Pre_StartIndex = 12;
                 }, name: nameof(ShopItems_4));
 

@@ -1,39 +1,47 @@
-﻿namespace BinarySerializer.UbiArt
+﻿using System;
+
+namespace BinarySerializer.UbiArt
 {
     public class FiestaRun_ShopItems<T> : BinarySerializable
     {
-        public bool Pre_HasHeroes { get; set; } // a6
+        public ushort Pre_Version { get; set; }
+        public bool Pre_HasStates { get; set; } // a6
         public bool Pre_HasUnknownItems { get; set; } // a7
         public int Pre_Count { get; set; } // a3
         public int Pre_OldCount { get; set; } // a8
         public int Pre_StartIndex { get; set; } // a9
 
-        public HeroState[] HeroStates { get; set; }
-        public bool[] Flags_1 { get; set; }
+        public ItemState[] States { get; set; }
+        public bool[] ExclamationFlags { get; set; }
+
+        // Version 2 and above only
         public bool[] Flags_2 { get; set; }
         public bool[] Flags_3 { get; set; }
         public bool[] Flags_4 { get; set; }
 
         public override void SerializeImpl(SerializerObject s)
         {
-            // For legacy support the game has increased all hero state values by 4 in the new version
+            // For legacy support the game has increased all state values by 4 in the new version
             bool isNewVersion = false;
 
             // Heroes
-            if (Pre_HasHeroes)
+            if (Pre_HasStates)
             {
-                int heroIndex = Pre_StartIndex;
+                int stateIndex = Pre_StartIndex;
 
-                HeroStates = s.SerializeArrayUntil<HeroState>(HeroStates, x =>
+                States = s.SerializeArrayUntil<ItemState>(States, x =>
                 {
                     if ((byte)x > 4)
                         isNewVersion = true;
 
-                    heroIndex++;
+                    if (!Enum.IsDefined(typeof(ItemState), x))
+                        throw new Exception($"Invalid item state value: {x}");
 
-                    return heroIndex >= Pre_Count || 
-                           heroIndex >= Pre_OldCount && !isNewVersion;
-                }, name: nameof(HeroStates));
+                    stateIndex++;
+
+                    return stateIndex >= Pre_Count || 
+                           stateIndex >= Pre_OldCount && !isNewVersion;
+                }, name: nameof(States));
             }
 
             if (Pre_HasUnknownItems)
@@ -45,12 +53,15 @@
 
                 s.DoBits<T>(b =>
                 {
-                    Flags_1 ??= new bool[count - Pre_StartIndex];
+                    ExclamationFlags ??= new bool[count - Pre_StartIndex];
 
-                    for (int i = 0; i < Flags_1.Length; i++)
-                        Flags_1[i] = b.SerializeBits<bool>(Flags_1[i], 1, name: $"{nameof(Flags_1)}[{i}]");
+                    for (int i = 0; i < ExclamationFlags.Length; i++)
+                        ExclamationFlags[i] = b.SerializeBits<bool>(ExclamationFlags[i], 1, name: $"{nameof(ExclamationFlags)}[{i}]");
                 });
             }
+
+            if (Pre_Version < 2)
+                return;
 
             s.DoBits<T>(b =>
             {
@@ -77,21 +88,21 @@
             });
         }
 
-        public enum HeroState : byte
+        public enum ItemState : byte
         {
             // Old version
-            Old_NotAvailable = 0,
-            Old_HeroState_1 = 1,
-            Old_HeroState_2 = 2,
+            Old_NotPurchased = 0,
+            Old_Hidden = 1,
+            Old_Purchased = 2,
             Old_Current = 3,
-            Old_HeroState_4 = 4,
+            Old_State_4 = 4, // ?
 
             // New version
-            NotAvailable = 5,
-            HeroState_1 = 6,
-            HeroState_2 = 7,
+            NotPurchased = 5,
+            Hidden = 6,
+            Purchased = 7,
             Current = 8,
-            HeroState_4 = 9,
+            State_4 = 9, // ?
         }
     }
 }
