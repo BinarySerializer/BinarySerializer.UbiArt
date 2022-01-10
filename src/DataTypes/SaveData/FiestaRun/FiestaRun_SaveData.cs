@@ -17,9 +17,9 @@
         
         public uint LumsGlobalCounter { get; set; }
         
-        public FiestaRun_ShopItems<ushort> ShopItems_1 { get; set; } // Gallery
-        public FiestaRun_ShopItems<ushort> ShopItems_2 { get; set; } // Heroes
-        public FiestaRun_ShopItems<byte> ShopItems_3 { get; set; }
+        public FiestaRun_ShopItems<ushort> ShopItems_Gallery { get; set; }
+        public FiestaRun_ShopItems<ushort> ShopItems_Heroes { get; set; }
+        public FiestaRun_ShopItems<byte> ShopItems_Unknown { get; set; }
 
         public bool IsAllLevelsLocked { get; set; }
         public bool[] Tutorials { get; set; }
@@ -68,7 +68,7 @@
         public bool IsPermanentGadgetInfoDisplayed { get; set; }
         public bool IsChineseLanguageSet { get; set; }
 
-        public FiestaRun_ShopItems<ushort> ShopItems_4 { get; set; }
+        public FiestaRun_ShopItems<ushort> ShopItems_UnknownV2 { get; set; }
 
         public byte CurrentCandyIslandIdx { get; set; }
         public bool HairlicoLocked { get; set; }
@@ -86,7 +86,7 @@
             LumsGlobalCounter = s.Serialize<uint>(LumsGlobalCounter, name: nameof(LumsGlobalCounter));
 
             // TODO: Old counts don't match with Windows Preload Edition (version 1)
-            ShopItems_1 = s.SerializeObject<FiestaRun_ShopItems<ushort>>(ShopItems_1, x =>
+            ShopItems_Gallery = s.SerializeObject<FiestaRun_ShopItems<ushort>>(ShopItems_Gallery, x =>
             {
                 x.Pre_Version = Version;
                 x.Pre_Count = 15;
@@ -94,8 +94,8 @@
                 x.Pre_HasUnknownItems = true;
                 x.Pre_OldCount = 12;
                 x.Pre_StartIndex = 0;
-            }, name: nameof(ShopItems_1));
-            ShopItems_2 = s.SerializeObject<FiestaRun_ShopItems<ushort>>(ShopItems_2, x =>
+            }, name: nameof(ShopItems_Gallery));
+            ShopItems_Heroes = s.SerializeObject<FiestaRun_ShopItems<ushort>>(ShopItems_Heroes, x =>
             {
                 x.Pre_Version = Version;
                 x.Pre_Count = 12;
@@ -103,8 +103,8 @@
                 x.Pre_HasUnknownItems = true;
                 x.Pre_OldCount = 9;
                 x.Pre_StartIndex = 0;
-            }, name: nameof(ShopItems_2));
-            ShopItems_3 = s.SerializeObject<FiestaRun_ShopItems<byte>>(ShopItems_3, x =>
+            }, name: nameof(ShopItems_Heroes));
+            ShopItems_Unknown = s.SerializeObject<FiestaRun_ShopItems<byte>>(ShopItems_Unknown, x =>
             {
                 x.Pre_Version = Version;
                 x.Pre_Count = 8;
@@ -112,7 +112,7 @@
                 x.Pre_HasUnknownItems = true;
                 x.Pre_OldCount = 8; // Game sets 100 here which is wrong (but doesn't matter since HasStates is false)
                 x.Pre_StartIndex = 0;
-            }, name: nameof(ShopItems_3));
+            }, name: nameof(ShopItems_Unknown));
 
             s.DoBits<ushort>(b =>
             {
@@ -185,7 +185,7 @@
                     IsChineseLanguageSet = b.SerializeBits<bool>(IsChineseLanguageSet, 1, name: nameof(IsChineseLanguageSet));
                 });
 
-                ShopItems_4 = s.SerializeObject<FiestaRun_ShopItems<ushort>>(ShopItems_4, x =>
+                ShopItems_UnknownV2 = s.SerializeObject<FiestaRun_ShopItems<ushort>>(ShopItems_UnknownV2, x =>
                 {
                     x.Pre_Version = Version;
                     x.Pre_Count = 16;
@@ -193,7 +193,7 @@
                     x.Pre_HasUnknownItems = true;
                     x.Pre_OldCount = 100; // Default value
                     x.Pre_StartIndex = 12;
-                }, name: nameof(ShopItems_4));
+                }, name: nameof(ShopItems_UnknownV2));
 
                 CurrentCandyIslandIdx = s.Serialize<byte>(CurrentCandyIslandIdx, name: nameof(CurrentCandyIslandIdx));
                 HairlicoLocked = s.Serialize<bool>(HairlicoLocked, name: nameof(HairlicoLocked));
