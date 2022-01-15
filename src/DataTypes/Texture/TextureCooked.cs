@@ -40,36 +40,41 @@
 
         public override void SerializeImpl(SerializerObject s)
         {
-            Version = s.Serialize<uint>(Version, name: nameof(Version));
-            Signature = s.Serialize<uint>(Signature, name: nameof(Signature));
+            UbiArtSettings settings = s.GetSettings<UbiArtSettings>();
 
-            if (Signature != 0x54455800) // TEX
-                throw new BinarySerializableException(this, "The file signature does not match TEX");
+            if (settings.Game != Game.RaymanOrigins)
+            {
+                Version = s.Serialize<uint>(Version, name: nameof(Version));
+                Signature = s.Serialize<uint>(Signature, name: nameof(Signature));
 
-            HdrSize = s.Serialize<uint>(HdrSize, name: nameof(HdrSize));
+                if (Signature != 0x54455800) // TEX
+                    throw new BinarySerializableException(this, "The file signature does not match TEX");
 
-            TextureSize = s.Serialize<uint>(TextureSize, name: nameof(TextureSize));
-            Width = s.Serialize<ushort>(Width, name: nameof(Width));
-            Height = s.Serialize<ushort>(Height, name: nameof(Height));
-            UnknownX = s.Serialize<ushort>(UnknownX, name: nameof(UnknownX));
-            UnknownY = s.Serialize<ushort>(UnknownY, name: nameof(UnknownY));
+                HdrSize = s.Serialize<uint>(HdrSize, name: nameof(HdrSize));
 
-            if (Version == 16 || Version == 17)
-                Unknown6 = s.Serialize<uint>(Unknown6, name: nameof(Unknown6));
+                TextureSize = s.Serialize<uint>(TextureSize, name: nameof(TextureSize));
+                Width = s.Serialize<ushort>(Width, name: nameof(Width));
+                Height = s.Serialize<ushort>(Height, name: nameof(Height));
+                UnknownX = s.Serialize<ushort>(UnknownX, name: nameof(UnknownX));
+                UnknownY = s.Serialize<ushort>(UnknownY, name: nameof(UnknownY));
 
-            TextureSize2 = s.Serialize<uint>(TextureSize2, name: nameof(TextureSize2));
+                if (Version == 16 || Version == 17)
+                    Unknown6 = s.Serialize<uint>(Unknown6, name: nameof(Unknown6));
 
-            Unknown0 = s.Serialize<uint>(Unknown0, name: nameof(Unknown0));
-            Unknown1 = s.Serialize<uint>(Unknown1, name: nameof(Unknown1));
-            Unknown2 = s.Serialize<uint>(Unknown2, name: nameof(Unknown2));
+                TextureSize2 = s.Serialize<uint>(TextureSize2, name: nameof(TextureSize2));
 
-            if (Version > 10)
-                Unknown3 = s.Serialize<uint>(Unknown3, name: nameof(Unknown3));
+                Unknown0 = s.Serialize<uint>(Unknown0, name: nameof(Unknown0));
+                Unknown1 = s.Serialize<uint>(Unknown1, name: nameof(Unknown1));
+                Unknown2 = s.Serialize<uint>(Unknown2, name: nameof(Unknown2));
 
-            Unknown4 = s.Serialize<uint>(Unknown4, name: nameof(Unknown4));
+                if (Version > 10)
+                    Unknown3 = s.Serialize<uint>(Unknown3, name: nameof(Unknown3));
 
-            if (Version > 10)
-                Unknown5 = s.Serialize<uint>(Unknown5, name: nameof(Unknown5));
+                Unknown4 = s.Serialize<uint>(Unknown4, name: nameof(Unknown4));
+
+                if (Version > 10)
+                    Unknown5 = s.Serialize<uint>(Unknown5, name: nameof(Unknown5));
+            }
 
             if (s.GetSettings<UbiArtSettings>().Platform == Platform.Xbox360)
                 Header_Xbox360 = s.SerializeObject<TextureCooked_Xbox360Header>(Header_Xbox360, name: nameof(Header_Xbox360));
