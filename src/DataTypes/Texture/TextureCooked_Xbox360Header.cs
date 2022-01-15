@@ -2,12 +2,9 @@
 
 namespace BinarySerializer.UbiArt
 {
-    public class TextureCooked_Xbox360 : BinarySerializable
+    public class TextureCooked_Xbox360Header : BinarySerializable
     {
         #region Public Properties
-
-        public long Pre_FileSize { get; set; }
-        public bool Pre_SerializeImageData { get; set; } = true;
 
         public byte[] Header_0 { get; set; }
         public TextureCompressionType CompressionType { get; set; }
@@ -15,8 +12,6 @@ namespace BinarySerializer.UbiArt
         public int Width { get; set; }
         public int Height { get; set; }
         public byte[] Header_1 { get; set; }
-
-        public byte[] ImageData { get; set; }
 
         #endregion
 
@@ -30,20 +25,18 @@ namespace BinarySerializer.UbiArt
             Width = BitHelpers.ExtractBits(Dimensions, 13, 0) + 1;
             Height = BitHelpers.ExtractBits(Dimensions, 13, 13) + 1;
             Header_1 = s.SerializeArray<byte>(Header_1, 12, name: nameof(Header_1));
-            if (Pre_SerializeImageData)
-                ImageData = s.SerializeArray<byte>(ImageData, Pre_FileSize - (Offset.FileOffset - s.CurrentFileOffset), name: nameof(ImageData));
         }
 
-        public byte[] Untile(bool swapBytes)
+        public byte[] Untile(byte[] imageData, bool swapBytes)
         {
-            byte[] imgData = swapBytes ? new byte[ImageData.Length] : ImageData;
+            byte[] imgData = swapBytes ? new byte[imageData.Length] : imageData;
 
             if (swapBytes)
             {
-                for (int i = 0; i < ImageData.Length / 2; i++)
+                for (int i = 0; i < imageData.Length / 2; i++)
                 {
-                    imgData[i * 2] = ImageData[i * 2 + 1];
-                    imgData[i * 2 + 1] = ImageData[i * 2];
+                    imgData[i * 2] = imageData[i * 2 + 1];
+                    imgData[i * 2 + 1] = imageData[i * 2];
                 }
             }
 
