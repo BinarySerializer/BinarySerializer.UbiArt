@@ -15,12 +15,14 @@
 
             // NOTE: So far this only appears to be the case for the bundle_pc32.ipk file used in Child of Light
             if (FilePack.Files.Length != BootHeader.FilesCount)
-                s.LogWarning($"The initial file count {BootHeader.FilesCount} does not match the file array size {FilePack.Files.Length}");
+                s.Context.Logger?.LogWarning("The initial file count {0} does not match the file array size {1}", 
+                    BootHeader.FilesCount, FilePack.Files.Length);
 
             long endOffset = s.CurrentFileOffset - Offset.FileOffset;
 
             if (endOffset != BootHeader.BaseOffset)
-                s.LogWarning($"Offset value {BootHeader.BaseOffset} doesn't match file entry end offset {endOffset}");
+                s.Context.Logger?.LogWarning("Offset value {0} doesn't match file entry end offset {1}",
+                    BootHeader.BaseOffset, endOffset);
         }
     }
 }
