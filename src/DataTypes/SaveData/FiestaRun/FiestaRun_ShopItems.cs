@@ -3,6 +3,7 @@
 namespace BinarySerializer.UbiArt
 {
     public class FiestaRun_ShopItems<T> : BinarySerializable
+        where T : struct
     {
         public ushort Pre_Version { get; set; }
         public bool Pre_HasStates { get; set; } // a6

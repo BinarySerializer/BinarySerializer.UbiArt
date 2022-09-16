@@ -16,6 +16,7 @@ namespace BinarySerializer.UbiArt
         /// <param name="name">The object value name, for logging</param>
         /// <returns>The value</returns>
         public static T SerializeUbiArtGenericValue<T>(this SerializerObject s, T value, string name = null)
+            where T : struct
         {
             // Get the type
             Type t = typeof(T);
@@ -41,6 +42,7 @@ namespace BinarySerializer.UbiArt
         }
 
         public static T[] SerializeUbiArtArray<T>(this SerializerObject s, T[] array, string name = null)
+            where T : struct
         {
             // Serialize the size
             array = s.SerializeArraySize<T, uint>(array, name: name);

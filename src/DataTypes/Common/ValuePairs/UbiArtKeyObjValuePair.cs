@@ -6,6 +6,7 @@
     /// <typeparam name="TKey">The key value type</typeparam>
     /// <typeparam name="TValue">The serializable object type</typeparam>
     public class UbiArtKeyObjValuePair<TKey, TValue> : BinarySerializable
+        where TKey : struct
         where TValue : BinarySerializable, new()
     {
         /// <summary>
