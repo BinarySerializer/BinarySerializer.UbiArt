@@ -40,7 +40,7 @@
 
         public override void SerializeImpl(SerializerObject s)
         {
-            UbiArtSettings settings = s.GetSettings<UbiArtSettings>();
+            UbiArtSettings settings = s.GetRequiredSettings<UbiArtSettings>();
 
             if (settings.Game != Game.RaymanOrigins)
             {
@@ -76,7 +76,7 @@
                     Unknown5 = s.Serialize<uint>(Unknown5, name: nameof(Unknown5));
             }
 
-            if (s.GetSettings<UbiArtSettings>().Platform == Platform.Xbox360)
+            if (s.GetRequiredSettings<UbiArtSettings>().Platform == Platform.Xbox360)
                 Header_Xbox360 = s.SerializeObject<TextureCooked_Xbox360Header>(Header_Xbox360, name: nameof(Header_Xbox360));
 
             if (Pre_SerializeImageData)

@@ -76,7 +76,7 @@ namespace BinarySerializer.UbiArt
         public override void SerializeImpl(SerializerObject s)
         {
             // Just Dance reads the values in reverse
-            if (s.GetSettings<UbiArtSettings>().Game == Game.JustDance2017)
+            if (s.GetRequiredSettings<UbiArtSettings>().Game == Game.JustDance2017)
             {
                 // Read the path
                 FileName = s.SerializeObject<String8>(FileName, name: nameof(FileName));
@@ -91,7 +91,7 @@ namespace BinarySerializer.UbiArt
 
             StringID = s.SerializeObject<StringID>(StringID, name: nameof(StringID));
 
-            if (s.GetSettings<UbiArtSettings>().Game != Game.RaymanOrigins)
+            if (s.GetRequiredSettings<UbiArtSettings>().Game != Game.RaymanOrigins)
                 Flags = s.Serialize<uint>(Flags, name: nameof(Flags));
         }
 
