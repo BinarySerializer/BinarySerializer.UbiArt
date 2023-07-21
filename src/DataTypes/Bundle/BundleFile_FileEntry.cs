@@ -1,4 +1,6 @@
-﻿namespace BinarySerializer.UbiArt
+﻿using System;
+
+namespace BinarySerializer.UbiArt
 {
     // NOTE: This is actually a a value pair with the first value being the header (FileHeaderRuntime) and the second the path. However
     //       due to Origins storing the path differently we serialize it all as one class for now.
@@ -15,7 +17,12 @@
         public uint OffsetsCount { get; set; }
         public uint FileSize { get; set; }
         public uint CompressedSize { get; set; }
-        public ulong TimeStamp { get; set; }
+        public long TimeStamp { get; set; } // LastTimeWriteAccess
+        public DateTimeOffset TimeStampDateTimeOffset
+        {
+            get => DateTimeOffset.FromFileTime(TimeStamp);
+            set => TimeStamp = value.ToFileTime();
+        }
         public ulong[] Offsets { get; set; } // Can be multiple for less seeking
         public Path Path { get; set; }
 
@@ -36,7 +43,7 @@
             OffsetsCount = s.Serialize<uint>(OffsetsCount, name: nameof(OffsetsCount));
             FileSize = s.Serialize<uint>(FileSize, name: nameof(FileSize));
             CompressedSize = s.Serialize<uint>(CompressedSize, name: nameof(CompressedSize));
-            TimeStamp = s.Serialize<ulong>(TimeStamp, name: nameof(TimeStamp));
+            TimeStamp = s.Serialize<long>(TimeStamp, name: nameof(TimeStamp));
             Offsets = s.SerializeArray<ulong>(Offsets, (int)OffsetsCount, name: nameof(Offsets));
 
             // For any game after Origins the path is in the standard format
