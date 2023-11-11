@@ -1,5 +1,6 @@
 ﻿using System.IO;
-using Ionic.Zlib;
+using SharpCompress.Compressors;
+using SharpCompress.Compressors.Deflate;
 
 namespace BinarySerializer.UbiArt
 {
@@ -12,13 +13,13 @@ namespace BinarySerializer.UbiArt
 
         public void DecodeStream(Stream input, Stream output)
         {
-            using var zStream = new ZlibStream(input, CompressionMode.Decompress, true);
+            using var zStream = new ZlibStream(new NonDisposableWrapperStream(input), CompressionMode.Decompress);
             zStream.CopyTo(output);
         }
 
         public void EncodeStream(Stream input, Stream output)
         {
-            using var zStream = new ZlibStream(input, CompressionMode.Compress, true);
+            using var zStream = new ZlibStream(new NonDisposableWrapperStream(input), CompressionMode.Compress);
             zStream.CopyTo(output);
         }
     }
