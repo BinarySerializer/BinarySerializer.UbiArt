@@ -1,4 +1,6 @@
-﻿namespace BinarySerializer.UbiArt
+﻿using System;
+
+namespace BinarySerializer.UbiArt
 {
     /*
         Textures:
@@ -67,7 +69,7 @@
 
         #endregion
 
-        #region Public Methods
+        #region Public Properties
 
         /// <summary>
         /// The game
@@ -79,7 +81,17 @@
         /// </summary>
         public Platform Platform { get; }
 
-        public Endian GetEndian => Game == Game.RaymanOrigins && Platform == Platform.Nintendo3DS ? Endian.Little : Endian.Big;
+        public Endian Endian => Game == Game.RaymanOrigins && Platform == Platform.Nintendo3DS ? Endian.Little : Endian.Big;
+
+        public string PlatformString => Platform switch
+        {
+            Platform.PC => "PC",
+            Platform.Android => "android",
+            Platform.iOS => "ios",
+            Platform.Mac => "macos",
+            Platform.PSVita => "VITA",
+            _ => throw new InvalidOperationException($"The platform {Platform} is not supported")
+        };
 
         #endregion
     }
