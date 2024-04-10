@@ -86,7 +86,7 @@ Rayman Mini 1.2 (Mac):                       8       12       12        1       
             Unknown5 = s.SerializeUbiArtBool(Unknown5, name: nameof(Unknown5));
             Unknown6 = s.Serialize<uint>(Unknown6, name: nameof(Unknown6));
 
-            if (s.GetRequiredSettings<UbiArtSettings>().Game == UbiArt.Game.ValiantHearts)
+            if (s.GetRequiredSettings<UbiArtSettings>().Game == Game.ValiantHearts)
                 Unknown9 = s.Serialize<uint>(Unknown9, name: nameof(Unknown9));
 
             Unknown7 = s.Serialize<uint>(Unknown7, name: nameof(Unknown7));

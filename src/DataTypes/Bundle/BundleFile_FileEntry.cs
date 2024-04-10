@@ -35,16 +35,19 @@ namespace BinarySerializer.UbiArt
 
         public override void SerializeImpl(SerializerObject s)
         {
-            // 3DS file entries can not be serialized separately
-            if (Pre_BundleVersion == 4)
-                throw new BinarySerializableException(this, $"Bundles with version 4 do not use {nameof(BundleFile_FileEntry)}");
-
             // Serialize header values
-            OffsetsCount = s.Serialize<uint>(OffsetsCount, name: nameof(OffsetsCount));
+            if (Pre_BundleVersion != 4)
+                OffsetsCount = s.Serialize<uint>(OffsetsCount, name: nameof(OffsetsCount));
+            else
+                OffsetsCount = 1;
+
             FileSize = s.Serialize<uint>(FileSize, name: nameof(FileSize));
             CompressedSize = s.Serialize<uint>(CompressedSize, name: nameof(CompressedSize));
             TimeStamp = s.Serialize<long>(TimeStamp, name: nameof(TimeStamp));
             Offsets = s.SerializeArray<ulong>(Offsets, (int)OffsetsCount, name: nameof(Offsets));
+
+            if (Pre_BundleVersion == 4)
+                return;
 
             // For any game after Origins the path is in the standard format
             if (Pre_BundleVersion >= 5)
