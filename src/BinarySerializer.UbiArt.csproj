@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\BinarySerializer.Audio\src\BinarySerializer.Audio.csproj" />
     <ProjectReference Include="..\..\BinarySerializer\src\BinarySerializer.csproj" />
   </ItemGroup>
 
