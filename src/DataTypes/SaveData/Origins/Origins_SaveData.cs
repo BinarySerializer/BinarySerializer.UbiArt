@@ -1,4 +1,6 @@
-﻿namespace BinarySerializer.UbiArt
+﻿using static BinarySerializer.UbiArt.Origins_SaveData;
+
+namespace BinarySerializer.UbiArt
 {
     // TODO: Move classes into separate files
     // TODO: Support multiple versions since they have similar (same?) save formats. Currently this supports the PC version.
@@ -6,29 +8,8 @@
     /// <summary>
     /// The save file data used for Rayman Origins
     /// </summary>
-    public class Origins_SaveData : BinarySerializable
+    public class Origins_SaveData : SaveGameFile<Ray_PersistentGameData_Universe>
     {
-        #region Public Properties
-        
-        public byte[] Bytes_00 { get; set; }
-        public bool Bool_0210 { get; set; }
-        public Ray_PersistentGameData_Universe SaveData { get; set; }
-        public byte[] Footer { get; set; }
-
-        #endregion
-
-        #region Public Methods
-
-        public override void SerializeImpl(SerializerObject s)
-        {
-            Bytes_00 = s.SerializeArray<byte>(Bytes_00, 528, name: nameof(Bytes_00));
-            Bool_0210 = s.SerializeUbiArtBool(Bool_0210, name: nameof(Bool_0210));
-            SaveData = s.SerializeObject<Ray_PersistentGameData_Universe>(SaveData, name: nameof(SaveData));
-            Footer = s.SerializeArray<byte>(Footer, 288, name: nameof(Footer));
-        }
-
-        #endregion
-
         #region Save Data Classes
 
         /// <summary>
