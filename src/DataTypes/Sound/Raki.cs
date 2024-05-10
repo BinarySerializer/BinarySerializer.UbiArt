@@ -5,12 +5,12 @@
     {
         // Header
         public uint Version { get; set; }
-        public uint Uint_08 { get; set; } // Always 0
+        public uint Compress { get; set; }
         public string Platform { get; set; }
         public string Format { get; set; }
-        public int DataOffset1 { get; set; }
-        public int DataOffset2 { get; set; }
-        public uint Uint_20 { get; set; } // Sound type? For Legends it seems to be 0 = sfx, 1 = ambience, 3 = music?
+        public int NonDataSize { get; set; }
+        public int DataOffset { get; set; }
+        public RakiFlags Flags { get; set; }
 
         // Chunks (usually just fmt and data, but more complex tracks, like for music levels, have more chunks)
         public RakiChunkHeader[] ChunkHeaders { get; set; }
@@ -28,8 +28,8 @@
 
                 if (chunkHeader.Identifier == "data")
                 {
-                    DataOffset1 = offset;
-                    DataOffset2 = offset;
+                    NonDataSize = offset;
+                    DataOffset = offset;
                 }
 
                 offset += chunkHeader.ChunkSize;
@@ -53,13 +53,13 @@
             s.DoEndian(endian, () =>
             {
                 s.SerializeMagicString("RAKI", 4);
-                Uint_08 = s.Serialize<uint>(Uint_08, name: nameof(Uint_08));
+                Compress = s.Serialize<uint>(Compress, name: nameof(Compress));
                 Platform = s.SerializeString(Platform, length: 4, name: nameof(Platform));
                 Format = s.SerializeString(Format, length: 4, name: nameof(Format));
-                DataOffset1 = s.Serialize<int>(DataOffset1, name: nameof(DataOffset1));
-                DataOffset2 = s.Serialize<int>(DataOffset2, name: nameof(DataOffset2));
+                NonDataSize = s.Serialize<int>(NonDataSize, name: nameof(NonDataSize));
+                DataOffset = s.Serialize<int>(DataOffset, name: nameof(DataOffset));
                 ChunkHeaders = s.SerializeArraySize<RakiChunkHeader, uint>(ChunkHeaders, name: nameof(ChunkHeaders));
-                Uint_20 = s.Serialize<uint>(Uint_20, name: nameof(Uint_20));
+                Flags = s.Serialize<RakiFlags>(Flags, name: nameof(Flags));
 
                 ChunkHeaders = s.SerializeObjectArray<RakiChunkHeader>(ChunkHeaders, ChunkHeaders.Length, name: nameof(ChunkHeaders));
 
