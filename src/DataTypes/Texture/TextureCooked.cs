@@ -29,8 +29,8 @@
 
         public uint CrcTextureConfig { get; set; }
 
-        public TextureWrapMode WrapModeX { get; set; }
-        public TextureWrapMode WrapModeY { get; set; }
+        public TexAdressMode WrapModeX { get; set; }
+        public TexAdressMode WrapModeY { get; set; }
 
         public TextureCooked_Xbox360Header Header_Xbox360 { get; set; }
         public byte[] RawData { get; set; }
@@ -71,8 +71,8 @@
                 if (Version > 10)
                     CrcTextureConfig = s.Serialize<uint>(CrcTextureConfig, name: nameof(CrcTextureConfig));
 
-                WrapModeX = s.Serialize<TextureWrapMode>(WrapModeX, name: nameof(WrapModeX));
-                WrapModeY = s.Serialize<TextureWrapMode>(WrapModeY, name: nameof(WrapModeY));
+                WrapModeX = s.Serialize<TexAdressMode>(WrapModeX, name: nameof(WrapModeX));
+                WrapModeY = s.Serialize<TexAdressMode>(WrapModeY, name: nameof(WrapModeY));
 
                 s.SerializePadding(2);
 

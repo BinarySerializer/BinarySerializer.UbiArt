@@ -1,9 +1,10 @@
 ﻿namespace BinarySerializer.UbiArt
 {
-    public enum TextureWrapMode : byte
+    public enum TexAdressMode : byte
     {
-        Repeat = 0,
+        Wrap = 0,
         Mirror = 1,
         Clamp = 2,
+        Border = 3,
     }
 }
