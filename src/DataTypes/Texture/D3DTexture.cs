@@ -181,15 +181,16 @@ namespace BinarySerializer.UbiArt
 
             if (swapBytes)
             {
-                for (int i = 0; i < imageData.Length; i += 2)
+                for (int i = 0; i < imageData.Length / 2; i++)
                 {
-                    imgData[i] = imageData[i + 1];
-                    imgData[i + 1] = imageData[i];
+                    imgData[i * 2] = imageData[i * 2 + 1];
+                    imgData[i * 2 + 1] = imageData[i * 2];
                 }
             }
 
             return DataFormat switch
             {
+                GPUTEXTUREFORMAT.GPUTEXTUREFORMAT_8_8_8_8 => UntileTexture(imgData, ActualWidth, ActualHeight, 4, 32, 32, 1, 1),
                 GPUTEXTUREFORMAT.GPUTEXTUREFORMAT_DXT1 => UntileTexture(imgData, ActualWidth, ActualHeight, 8, 128, 128, 4, 4),
                 GPUTEXTUREFORMAT.GPUTEXTUREFORMAT_DXT2_3 => UntileTexture(imgData, ActualWidth, ActualHeight, 16, 128, 128, 4, 4),
                 GPUTEXTUREFORMAT.GPUTEXTUREFORMAT_DXT4_5 => UntileTexture(imgData, ActualWidth, ActualHeight, 16, 128, 128, 4, 4),
