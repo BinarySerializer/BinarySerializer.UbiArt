@@ -36,12 +36,12 @@
         // textures on Xbox 360 are mapped differently. This allows a texture with alpha to be 24-bit if it can re-use channels.
         // 0 = Alpha channel, 1 = Red channel, 2 = Green channel, 3 = Blue channel, 4 = 0x00, 5 = 0xFF
         public uint Remap { get; set; } = 0x00010203;
+        public bool IsRemapped => Remap != 0x00010203;
         public int Remap_A => BitHelpers.ExtractBits((int)Remap, 8, 24);
         public int Remap_R => BitHelpers.ExtractBits((int)Remap, 8, 16);
         public int Remap_G => BitHelpers.ExtractBits((int)Remap, 8, 8);
         public int Remap_B => BitHelpers.ExtractBits((int)Remap, 8, 0);
 
-        public D3DTexture Xbox360_D3DTexture { get; set; }
         public byte[] RawData { get; set; }
 
         #endregion
@@ -88,10 +88,6 @@
                 if (Version > 10)
                     Remap = s.Serialize<uint>(Remap, name: nameof(Remap));
             }
-
-            // TODO: This should be serialized as part of the image data since it's part of the Xbox 360 texture file
-            if (s.GetRequiredSettings<UbiArtSettings>().Platform == Platform.Xbox360)
-                Xbox360_D3DTexture = s.SerializeObject<D3DTexture>(Xbox360_D3DTexture, name: nameof(Xbox360_D3DTexture));
 
             if (Pre_SerializeRawData)
                 RawData = s.SerializeArray<byte>(RawData, Pre_FileSize - (s.CurrentFileOffset - Offset.FileOffset), name: nameof(RawData));
