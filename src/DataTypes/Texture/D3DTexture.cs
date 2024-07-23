@@ -214,13 +214,13 @@ namespace BinarySerializer.UbiArt
                 SignX = b.SerializeBits<GPUSIGN>(SignX, 2, name: nameof(SignX));
                 SignY = b.SerializeBits<GPUSIGN>(SignY, 2, name: nameof(SignY));
                 SignZ = b.SerializeBits<GPUSIGN>(SignZ, 2, name: nameof(SignZ));
+                SignW = b.SerializeBits<GPUSIGN>(SignW, 2, name: nameof(SignW));
                 ClampX = b.SerializeBits<GPUCLAMP>(ClampX, 3, name: nameof(ClampX));
                 ClampY = b.SerializeBits<GPUCLAMP>(ClampY, 3, name: nameof(ClampY));
                 ClampZ = b.SerializeBits<GPUCLAMP>(ClampZ, 3, name: nameof(ClampZ));
                 Unknown1 = b.SerializeBits<int>(Unknown1, 3, name: nameof(Unknown1));
                 Pitch = b.SerializeBits<int>(Pitch, 9, name: nameof(Pitch));
                 Tiled = b.SerializeBits<bool>(Tiled, 1, name: nameof(Tiled));
-                b.SerializePadding(2, logIfNotNull: true);
             });
             s.DoBits<int>(b =>
             {
