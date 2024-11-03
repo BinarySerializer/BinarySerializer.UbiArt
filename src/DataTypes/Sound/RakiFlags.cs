@@ -1,5 +1,8 @@
-﻿namespace BinarySerializer.UbiArt
+﻿using System;
+
+namespace BinarySerializer.UbiArt
 {
+    [Flags]
     public enum RakiFlags : uint
     {
         None = 0, // Usually used for sfx
