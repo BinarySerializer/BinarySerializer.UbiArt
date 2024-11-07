@@ -1,4 +1,5 @@
-﻿using static BinarySerializer.UbiArt.Legends_SaveData;
+﻿using System.Reflection;
+using static BinarySerializer.UbiArt.Legends_SaveData;
 
 namespace BinarySerializer.UbiArt
 {
@@ -72,6 +73,12 @@ namespace BinarySerializer.UbiArt
 
             public uint TimeSpendInGameInSec { get; set; }
 
+            public uint TimeSpendInDockedInSec { get; set; }
+
+            public uint TimeSpendInHandheldInSec { get; set; }
+
+            public uint TimeSpendInTableTopInSec { get; set; }
+
             public uint TeensiesBonusCounter { get; set; }
 
             public uint LuckyTicketsCounter { get; set; }
@@ -111,6 +118,8 @@ namespace BinarySerializer.UbiArt
             public bool UplayDoneAction2 { get; set; }
 
             public bool UplayDoneAction3 { get; set; }
+            
+            public bool UplayDoneAction4 { get; set; }
 
             public bool UplayDoneReward0 { get; set; }
 
@@ -119,6 +128,8 @@ namespace BinarySerializer.UbiArt
             public bool UplayDoneReward2 { get; set; }
 
             public bool UplayDoneReward3 { get; set; }
+            
+            public bool UplayDoneReward4 { get; set; }
 
             public StringID[] PlayedDiamondCupSequence { get; set; }
 
@@ -138,6 +149,12 @@ namespace BinarySerializer.UbiArt
 
             public bool RetroWorldUnlockMessageSeen { get; set; }
 
+            public bool MurphyGalleryUnlockMessageSeen { get; set; }
+
+            public bool MurphyWorldUnlockMessageSeen { get; set; }
+
+            public uint MurphyLevelDoneCount { get; set; }
+
             public bool FreedAllTeensiesMessageSeen { get; set; }
 
             public bool MisterDarkCompletionMessageSeen { get; set; }
@@ -155,6 +172,8 @@ namespace BinarySerializer.UbiArt
             public StringID[] DoorUnlockDRCMessageRequired { get; set; }
 
             public StringID LuckyTicketRewardWorldName { get; set; }
+
+            public bool ShareScreenTutoFulfilled { get; set; }
 
             public bool IsUGCMiiverseWarningSet { get; set; }
 
@@ -204,6 +223,14 @@ namespace BinarySerializer.UbiArt
                 GameCompleted = s.SerializeUbiArtBool(GameCompleted, name: nameof(GameCompleted));
                 TimeToCompleteGameInSec = s.Serialize<uint>(TimeToCompleteGameInSec, name: nameof(TimeToCompleteGameInSec));
                 TimeSpendInGameInSec = s.Serialize<uint>(TimeSpendInGameInSec, name: nameof(TimeSpendInGameInSec));
+
+                if (s.GetRequiredSettings<UbiArtSettings>().Platform == Platform.NintendoSwitch)
+                {
+                    TimeSpendInDockedInSec = s.Serialize<uint>(TimeSpendInDockedInSec, name: nameof(TimeSpendInDockedInSec));
+                    TimeSpendInHandheldInSec = s.Serialize<uint>(TimeSpendInHandheldInSec, name: nameof(TimeSpendInHandheldInSec));
+                    TimeSpendInTableTopInSec = s.Serialize<uint>(TimeSpendInTableTopInSec, name: nameof(TimeSpendInTableTopInSec));
+                }
+
                 TeensiesBonusCounter = s.Serialize<uint>(TeensiesBonusCounter, name: nameof(TeensiesBonusCounter));
                 LuckyTicketsCounter = s.Serialize<uint>(LuckyTicketsCounter, name: nameof(LuckyTicketsCounter));
                 LuckyTicketLevelCount = s.Serialize<uint>(LuckyTicketLevelCount, name: nameof(LuckyTicketLevelCount));
@@ -224,10 +251,18 @@ namespace BinarySerializer.UbiArt
                 UplayDoneAction1 = s.SerializeUbiArtBool(UplayDoneAction1, name: nameof(UplayDoneAction1));
                 UplayDoneAction2 = s.SerializeUbiArtBool(UplayDoneAction2, name: nameof(UplayDoneAction2));
                 UplayDoneAction3 = s.SerializeUbiArtBool(UplayDoneAction3, name: nameof(UplayDoneAction3));
+
+                if (s.GetRequiredSettings<UbiArtSettings>().Platform == Platform.NintendoSwitch)
+                    UplayDoneAction4 = s.SerializeUbiArtBool(UplayDoneAction4, name: nameof(UplayDoneAction4));
+
                 UplayDoneReward0 = s.SerializeUbiArtBool(UplayDoneReward0, name: nameof(UplayDoneReward0));
                 UplayDoneReward1 = s.SerializeUbiArtBool(UplayDoneReward1, name: nameof(UplayDoneReward1));
                 UplayDoneReward2 = s.SerializeUbiArtBool(UplayDoneReward2, name: nameof(UplayDoneReward2));
                 UplayDoneReward3 = s.SerializeUbiArtBool(UplayDoneReward3, name: nameof(UplayDoneReward3));
+
+                if (s.GetRequiredSettings<UbiArtSettings>().Platform == Platform.NintendoSwitch)
+                    UplayDoneReward4 = s.SerializeUbiArtBool(UplayDoneReward4, name: nameof(UplayDoneReward4));
+
                 PlayedDiamondCupSequence = s.SerializeUbiArtObjectArray<StringID>(PlayedDiamondCupSequence, name: nameof(PlayedDiamondCupSequence));
                 Costumes = s.SerializeUbiArtObjectArray<StringID>(Costumes, name: nameof(Costumes));
                 PlayedChallenge = s.SerializeUbiArtArray<uint>(PlayedChallenge, name: nameof(PlayedChallenge));
@@ -237,6 +272,14 @@ namespace BinarySerializer.UbiArt
                 BarbaraCostumeUnlockSeen = s.SerializeUbiArtBool(BarbaraCostumeUnlockSeen, name: nameof(BarbaraCostumeUnlockSeen));
                 WorldUnlockMessagesSeen = s.SerializeUbiArtObjectArray<StringID>(WorldUnlockMessagesSeen, name: nameof(WorldUnlockMessagesSeen));
                 RetroWorldUnlockMessageSeen = s.SerializeUbiArtBool(RetroWorldUnlockMessageSeen, name: nameof(RetroWorldUnlockMessageSeen));
+
+                if (s.GetRequiredSettings<UbiArtSettings>().Platform == Platform.NintendoSwitch)
+                {
+                    MurphyGalleryUnlockMessageSeen = s.SerializeUbiArtBool(MurphyGalleryUnlockMessageSeen, name: nameof(MurphyGalleryUnlockMessageSeen));
+                    MurphyWorldUnlockMessageSeen = s.SerializeUbiArtBool(MurphyWorldUnlockMessageSeen, name: nameof(MurphyWorldUnlockMessageSeen));
+                    MurphyLevelDoneCount = s.Serialize<uint>(MurphyLevelDoneCount, name: nameof(MurphyLevelDoneCount));
+                }
+
                 FreedAllTeensiesMessageSeen = s.SerializeUbiArtBool(FreedAllTeensiesMessageSeen, name: nameof(FreedAllTeensiesMessageSeen));
                 MisterDarkCompletionMessageSeen = s.SerializeUbiArtBool(MisterDarkCompletionMessageSeen, name: nameof(MisterDarkCompletionMessageSeen));
                 FirstInvasionMessageSeen = s.SerializeUbiArtBool(FirstInvasionMessageSeen, name: nameof(FirstInvasionMessageSeen));
@@ -246,6 +289,10 @@ namespace BinarySerializer.UbiArt
                 DoorUnlockMessageSeen = s.SerializeUbiArtObjectArray<StringID>(DoorUnlockMessageSeen, name: nameof(DoorUnlockMessageSeen));
                 DoorUnlockDRCMessageRequired = s.SerializeUbiArtObjectArray<StringID>(DoorUnlockDRCMessageRequired, name: nameof(DoorUnlockDRCMessageRequired));
                 LuckyTicketRewardWorldName = s.SerializeObject<StringID>(LuckyTicketRewardWorldName, name: nameof(LuckyTicketRewardWorldName));
+
+                if (s.GetRequiredSettings<UbiArtSettings>().Platform == Platform.NintendoSwitch)
+                    ShareScreenTutoFulfilled = s.SerializeUbiArtBool(ShareScreenTutoFulfilled, name: nameof(ShareScreenTutoFulfilled));
+
                 IsUGCMiiverseWarningSet = s.SerializeUbiArtBool(IsUGCMiiverseWarningSet, name: nameof(IsUGCMiiverseWarningSet));
                 Reward39Failed = s.Serialize<int>(Reward39Failed, name: nameof(Reward39Failed));
                 UnlockPrivilegesData = s.SerializeObject<String8>(UnlockPrivilegesData, name: nameof(UnlockPrivilegesData));
@@ -268,6 +315,8 @@ namespace BinarySerializer.UbiArt
             public DateTime Onlinedate { get; set; }
 
             public DateTime LocalDate { get; set; }
+
+            public bool Sender { get; set; }
 
             public uint PersistentSeconds { get; set; }
 
@@ -332,6 +381,10 @@ namespace BinarySerializer.UbiArt
                 Type = s.Serialize<uint>(Type, name: nameof(Type));
                 Onlinedate = s.SerializeObject<DateTime>(Onlinedate, name: nameof(Onlinedate));
                 LocalDate = s.SerializeObject<DateTime>(LocalDate, name: nameof(LocalDate));
+
+                if (s.GetRequiredSettings<UbiArtSettings>().Platform == Platform.NintendoSwitch)
+                    Sender = s.SerializeUbiArtBool(Sender, name: nameof(Sender));
+                
                 PersistentSeconds = s.Serialize<uint>(PersistentSeconds, name: nameof(PersistentSeconds));
                 Title = s.SerializeObject<SmartLocId>(Title, name: nameof(Title));
                 Body = s.SerializeObject<SmartLocId>(Body, name: nameof(Body));

@@ -12,6 +12,10 @@ namespace BinarySerializer.UbiArt
         public T CONTENT { get; set; }
         public byte[] Footer { get; set; }
 
+        public byte Switch_Byte_00 { get; set; }
+        public byte[] Switch_Bytes_81 { get; set; } // Padding?
+        public uint Switch_SaveHeaderCRC { get; set; } // TODO: Should probably process this when serializing
+
         public uint PS3_Uint_80 { get; set; }
         public uint PS3_SaveDataLength { get; set; }
         public uint PS3_Uint_88 { get; set; } // Seems unused?
@@ -27,22 +31,31 @@ namespace BinarySerializer.UbiArt
                 Game.RaymanOrigins when settings.Platform is Platform.PC => Endian.Little,
                 Game.RaymanLegends when settings.Platform is Platform.PC => Endian.Little,
                 Game.RaymanLegends when settings.Platform is Platform.PlayStation3 => Endian.Big,
+                Game.RaymanLegends when settings.Platform is Platform.NintendoSwitch => Endian.Little,
                 _ => throw new ArgumentOutOfRangeException()
             }, () =>
             {
+                if (settings.Game == Game.RaymanLegends && settings.Platform == Platform.NintendoSwitch)
+                    Switch_Byte_00 = s.Serialize<byte>(Switch_Byte_00, name: nameof(Switch_Byte_00));
+
                 Name = s.SerializeString(Name, length: settings.Game switch
                 {
                     Game.RaymanOrigins when settings.Platform is Platform.PC => 520,
                     Game.RaymanLegends when settings.Platform is Platform.PC => 520,
                     Game.RaymanLegends when settings.Platform is Platform.PlayStation3 => 128,
+                    Game.RaymanLegends when settings.Platform is Platform.NintendoSwitch => 128,
                     _ => throw new ArgumentOutOfRangeException()
                 }, encoding: settings.Game switch
                 {
                     Game.RaymanOrigins when settings.Platform is Platform.PC => Encoding.Unicode,
                     Game.RaymanLegends when settings.Platform is Platform.PC => Encoding.Unicode,
                     Game.RaymanLegends when settings.Platform is Platform.PlayStation3 => Encoding.UTF8,
+                    Game.RaymanLegends when settings.Platform is Platform.NintendoSwitch => Encoding.UTF8,
                     _ => throw new ArgumentOutOfRangeException()
                 }, name: nameof(Name));
+
+                if (settings.Game == Game.RaymanLegends && settings.Platform == Platform.NintendoSwitch)
+                    Switch_Bytes_81 = s.SerializeArray<byte>(Switch_Bytes_81, 3, name: nameof(Switch_Bytes_81));
 
                 ChecksumCustomCRC32Processor processor = new(new ChecksumCustomCRC32Processor.CRCParameters(
                     hashSize: 32,
@@ -61,6 +74,11 @@ namespace BinarySerializer.UbiArt
                     processor.Serialize<uint>(s, "SaveDataCRC");
                     SaveCodeCRC = s.Serialize<uint>(SaveCodeCRC, name: nameof(SaveCodeCRC));
                     PS3_Uint_98 = s.Serialize<uint>(PS3_Uint_98, name: nameof(PS3_Uint_98));
+                }
+                else if (settings.Game == Game.RaymanLegends && settings.Platform == Platform.NintendoSwitch)
+                {
+                    processor.Serialize<uint>(s, "SaveDataCRC");
+                    Switch_SaveHeaderCRC = s.Serialize<uint>(Switch_SaveHeaderCRC, name: nameof(Switch_SaveHeaderCRC));
                 }
                 else
                 {
@@ -81,6 +99,7 @@ namespace BinarySerializer.UbiArt
                     Game.RaymanOrigins when settings.Platform is Platform.PC => 288,
                     Game.RaymanLegends when settings.Platform is Platform.PC => 400,
                     Game.RaymanLegends when settings.Platform is Platform.PlayStation3 => 0,
+                    Game.RaymanLegends when settings.Platform is Platform.NintendoSwitch => 0,
                     _ => throw new ArgumentOutOfRangeException()
                 }, name: nameof(Footer));
 
