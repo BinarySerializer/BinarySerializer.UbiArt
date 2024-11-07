@@ -35,8 +35,21 @@ namespace BinarySerializer.UbiArt
                 _ => throw new ArgumentOutOfRangeException()
             }, () =>
             {
+                ChecksumCustomCRC32Processor headerProcessor = null;
+
                 if (settings.Game == Game.RaymanLegends && settings.Platform == Platform.NintendoSwitch)
+                {
+                    headerProcessor = new ChecksumCustomCRC32Processor(new ChecksumCustomCRC32Processor.CRCParameters(
+                        hashSize: 32,
+                        poly: 0x04C11DB7,
+                        init: 0xFFFFFFFF,
+                        refIn: false,
+                        refOut: false,
+                        xorOut: 0xFFFFFFFF));
+                    s.BeginProcessed(headerProcessor);
+
                     Switch_Byte_00 = s.Serialize<byte>(Switch_Byte_00, name: nameof(Switch_Byte_00));
+                }
 
                 Name = s.SerializeString(Name, length: settings.Game switch
                 {
@@ -78,7 +91,8 @@ namespace BinarySerializer.UbiArt
                 else if (settings.Game == Game.RaymanLegends && settings.Platform == Platform.NintendoSwitch)
                 {
                     processor.Serialize<uint>(s, "SaveDataCRC");
-                    Switch_SaveHeaderCRC = s.Serialize<uint>(Switch_SaveHeaderCRC, name: nameof(Switch_SaveHeaderCRC));
+                    headerProcessor.IsActive = false;
+                    headerProcessor.Serialize<uint>(s, "SaveHeaderCRC");
                 }
                 else
                 {
@@ -93,7 +107,16 @@ namespace BinarySerializer.UbiArt
                         Read = s.SerializeUbiArtBool(Read, name: nameof(Read));
                         CONTENT = s.SerializeObject<T>(CONTENT, name: nameof(CONTENT));
                     });
+
+                    // Need to serialize the save data crc value, so activate it before ending the DoProcessed
+                    if (headerProcessor != null)
+                        headerProcessor.IsActive = true;
                 });
+
+                // Now serialize the save header crc
+                if (headerProcessor != null)
+                    s.EndProcessed(headerProcessor);
+
                 Footer = s.SerializeArray<byte>(Footer, settings.Game switch
                 {
                     Game.RaymanOrigins when settings.Platform is Platform.PC => 288,
