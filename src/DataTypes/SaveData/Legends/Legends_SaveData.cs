@@ -4,7 +4,6 @@ using static BinarySerializer.UbiArt.Legends_SaveData;
 namespace BinarySerializer.UbiArt
 {
     // TODO: Move classes into separate files
-    // TODO: Support multiple versions since they have similar (same?) save formats. Currently this supports the PC version.
 
     /// <summary>
     /// The save file data used for Rayman Legends
