@@ -146,7 +146,7 @@ namespace BinarySerializer.UbiArt
 
                 // Padded with a total length of 0x40000
                 if (settings.Game == Game.RaymanLegends && settings.Platform is Platform.PlayStation3 or Platform.Xbox360)
-                    s.Goto(Offset + 0x40000);
+                    s.SerializePadding(Offset + 0x40000 - s.CurrentPointer);
             });
         }
     }
