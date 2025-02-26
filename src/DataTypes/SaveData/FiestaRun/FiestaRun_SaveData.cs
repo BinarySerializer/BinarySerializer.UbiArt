@@ -17,9 +17,9 @@
         
         public uint LumsGlobalCounter { get; set; }
         
-        public FiestaRun_ShopItems<ushort> ShopItems_Gallery { get; set; }
-        public FiestaRun_ShopItems<ushort> ShopItems_Heroes { get; set; }
-        public FiestaRun_ShopItems<byte> ShopItems_Unknown { get; set; }
+        public FiestaRun_ShopItems<ushort> Wallpapers { get; set; }
+        public FiestaRun_ShopItems<ushort> CostumesV1 { get; set; } // 0-11
+        public FiestaRun_ShopItems<byte> Gadgets { get; set; }
 
         public bool IsAllLevelsLocked { get; set; }
         public bool[] Tutorials { get; set; }
@@ -63,12 +63,12 @@
         
         public bool IsLandSwitcherVisited { get; set; }
         public bool IsShownNewGadgetsRule { get; set; }
-        public bool Unknown { get; set; } // byte_A2A9DC
+        public bool Unknown { get; set; } // Tutorial related
         public bool PhoenixEquipedInNM { get; set; }
         public bool IsPermanentGadgetInfoDisplayed { get; set; }
         public bool IsChineseLanguageSet { get; set; }
 
-        public FiestaRun_ShopItems<ushort> ShopItems_UnknownV2 { get; set; }
+        public FiestaRun_ShopItems<ushort> CostumesV2 { get; set; } // 12-15
 
         public byte CurrentCandyIslandIdx { get; set; }
         public bool HairlicoLocked { get; set; }
@@ -76,7 +76,8 @@
         public bool iCloudSaveLoadViewed { get; set; }
         public byte NbLvlsPlayedSinceLastUpdate { get; set; }
 
-        public bool[] UnknownFlags { get; set; }
+        public bool[] BundleUnknownFlags { get; set; }
+        public bool[] BundleIsFirstShownFlags { get; set; }
 
         public override void SerializeImpl(SerializerObject s)
         {
@@ -86,33 +87,35 @@
             LumsGlobalCounter = s.Serialize<uint>(LumsGlobalCounter, name: nameof(LumsGlobalCounter));
 
             // TODO: Old counts don't match with Windows Preload Edition (version 1)
-            ShopItems_Gallery = s.SerializeObject<FiestaRun_ShopItems<ushort>>(ShopItems_Gallery, x =>
+            Wallpapers = s.SerializeObject<FiestaRun_ShopItems<ushort>>(Wallpapers, x =>
             {
                 x.Pre_Version = Version;
                 x.Pre_Count = 15;
-                x.Pre_HasStates = true;
-                x.Pre_HasUnknownItems = true;
+                x.Pre_HasStatus = true;
+                x.Pre_HasNewUnlocks = true;
                 x.Pre_OldCount = 12;
                 x.Pre_StartIndex = 0;
-            }, name: nameof(ShopItems_Gallery));
-            ShopItems_Heroes = s.SerializeObject<FiestaRun_ShopItems<ushort>>(ShopItems_Heroes, x =>
+            }, name: nameof(Wallpapers));
+            
+            CostumesV1 = s.SerializeObject<FiestaRun_ShopItems<ushort>>(CostumesV1, x =>
             {
                 x.Pre_Version = Version;
                 x.Pre_Count = 12;
-                x.Pre_HasStates = true;
-                x.Pre_HasUnknownItems = true;
+                x.Pre_HasStatus = true;
+                x.Pre_HasNewUnlocks = true;
                 x.Pre_OldCount = 9;
                 x.Pre_StartIndex = 0;
-            }, name: nameof(ShopItems_Heroes));
-            ShopItems_Unknown = s.SerializeObject<FiestaRun_ShopItems<byte>>(ShopItems_Unknown, x =>
+            }, name: nameof(CostumesV1));
+            
+            Gadgets = s.SerializeObject<FiestaRun_ShopItems<byte>>(Gadgets, x =>
             {
                 x.Pre_Version = Version;
                 x.Pre_Count = 8;
-                x.Pre_HasStates = false;
-                x.Pre_HasUnknownItems = true;
-                x.Pre_OldCount = 8; // Game sets 100 here which is wrong (but doesn't matter since HasStates is false)
+                x.Pre_HasStatus = false;
+                x.Pre_HasNewUnlocks = true;
+                x.Pre_OldCount = 8; // Game sets 100 here which is wrong (but doesn't matter since HasStatus is false)
                 x.Pre_StartIndex = 0;
-            }, name: nameof(ShopItems_Unknown));
+            }, name: nameof(Gadgets));
 
             s.DoBits<ushort>(b =>
             {
@@ -185,15 +188,15 @@
                     IsChineseLanguageSet = b.SerializeBits<bool>(IsChineseLanguageSet, 1, name: nameof(IsChineseLanguageSet));
                 });
 
-                ShopItems_UnknownV2 = s.SerializeObject<FiestaRun_ShopItems<ushort>>(ShopItems_UnknownV2, x =>
+                CostumesV2 = s.SerializeObject<FiestaRun_ShopItems<ushort>>(CostumesV2, x =>
                 {
                     x.Pre_Version = Version;
                     x.Pre_Count = 16;
-                    x.Pre_HasStates = true;
-                    x.Pre_HasUnknownItems = true;
+                    x.Pre_HasStatus = true;
+                    x.Pre_HasNewUnlocks = true;
                     x.Pre_OldCount = 100; // Default value
                     x.Pre_StartIndex = 12;
-                }, name: nameof(ShopItems_UnknownV2));
+                }, name: nameof(CostumesV2));
 
                 CurrentCandyIslandIdx = s.Serialize<byte>(CurrentCandyIslandIdx, name: nameof(CurrentCandyIslandIdx));
                 HairlicoLocked = s.Serialize<bool>(HairlicoLocked, name: nameof(HairlicoLocked));
@@ -206,10 +209,14 @@
                 
                 s.DoBits<long>(b =>
                 {
-                    UnknownFlags ??= new bool[2 * 6];
+                    BundleUnknownFlags ??= new bool[6];
+                    BundleIsFirstShownFlags ??= new bool[6];
 
-                    for (int i = 0; i < UnknownFlags.Length; i++)
-                        UnknownFlags[i] = b.SerializeBits<bool>(UnknownFlags[i], 1, name: $"{nameof(UnknownFlags)}[{i}]");
+                    for (int i = 0; i < 6; i++)
+                    {
+                        BundleUnknownFlags[i] = b.SerializeBits<bool>(BundleUnknownFlags[i], 1, name: $"{nameof(BundleUnknownFlags)}[{i}]");
+                        BundleIsFirstShownFlags[i] = b.SerializeBits<bool>(BundleIsFirstShownFlags[i], 1, name: $"{nameof(BundleIsFirstShownFlags)}[{i}]");
+                    }
                 });
             }
         }

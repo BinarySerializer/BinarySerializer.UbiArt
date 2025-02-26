@@ -6,46 +6,45 @@ namespace BinarySerializer.UbiArt
         where T : struct
     {
         public ushort Pre_Version { get; set; }
-        public bool Pre_HasStates { get; set; } // a6
-        public bool Pre_HasUnknownItems { get; set; } // a7
-        public int Pre_Count { get; set; } // a3
-        public int Pre_OldCount { get; set; } // a8
-        public int Pre_StartIndex { get; set; } // a9
+        public bool Pre_HasStatus { get; set; }
+        public bool Pre_HasNewUnlocks { get; set; }
+        public int Pre_Count { get; set; }
+        public int Pre_OldCount { get; set; }
+        public int Pre_StartIndex { get; set; }
 
-        public ItemState[] States { get; set; }
-        public bool[] ExclamationFlags { get; set; }
+        public ItemStatus[] Status { get; set; }
+        public bool[] IsNewUnlockFlags { get; set; }
 
         // Version 2 and above only
-        public bool[] Flags_2 { get; set; }
-        public bool[] Flags_3 { get; set; }
-        public bool[] Flags_4 { get; set; }
+        public bool[] IsOwnedFlags { get; set; }
+        public bool[] IsFirstShownFlags { get; set; }
+        public bool[] UnknownFlags { get; set; }
 
         public override void SerializeImpl(SerializerObject s)
         {
             // For legacy support the game has increased all state values by 4 in the new version
             bool isNewVersion = false;
 
-            // Heroes
-            if (Pre_HasStates)
+            if (Pre_HasStatus)
             {
-                int stateIndex = Pre_StartIndex;
+                int statusIndex = Pre_StartIndex;
 
-                States = s.SerializeArrayUntil<ItemState>(States, x =>
+                Status = s.SerializeArrayUntil<ItemStatus>(Status, x =>
                 {
                     if ((byte)x > 4)
                         isNewVersion = true;
 
-                    if (!Enum.IsDefined(typeof(ItemState), x))
-                        throw new Exception($"Invalid item state value: {x}");
+                    if (!Enum.IsDefined(typeof(ItemStatus), x))
+                        throw new Exception($"Invalid item status value: {x}");
 
-                    stateIndex++;
+                    statusIndex++;
 
-                    return stateIndex >= Pre_Count || 
-                           stateIndex >= Pre_OldCount && !isNewVersion;
-                }, name: nameof(States));
+                    return statusIndex >= Pre_Count || 
+                           statusIndex >= Pre_OldCount && !isNewVersion;
+                }, name: nameof(Status));
             }
 
-            if (Pre_HasUnknownItems)
+            if (Pre_HasNewUnlocks)
             {
                 int count = Pre_Count;
 
@@ -54,10 +53,10 @@ namespace BinarySerializer.UbiArt
 
                 s.DoBits<T>(b =>
                 {
-                    ExclamationFlags ??= new bool[count - Pre_StartIndex];
+                    IsNewUnlockFlags ??= new bool[count - Pre_StartIndex];
 
-                    for (int i = 0; i < ExclamationFlags.Length; i++)
-                        ExclamationFlags[i] = b.SerializeBits<bool>(ExclamationFlags[i], 1, name: $"{nameof(ExclamationFlags)}[{i}]");
+                    for (int i = 0; i < IsNewUnlockFlags.Length; i++)
+                        IsNewUnlockFlags[i] = b.SerializeBits<bool>(IsNewUnlockFlags[i], 1, name: $"{nameof(IsNewUnlockFlags)}[{i}]");
                 });
             }
 
@@ -66,30 +65,30 @@ namespace BinarySerializer.UbiArt
 
             s.DoBits<T>(b =>
             {
-                Flags_2 ??= new bool[Pre_Count - Pre_StartIndex];
+                IsOwnedFlags ??= new bool[Pre_Count - Pre_StartIndex];
 
-                for (int i = 0; i < Flags_2.Length; i++)
-                    Flags_2[i] = b.SerializeBits<bool>(Flags_2[i], 1, name: $"{nameof(Flags_2)}[{i}]");
+                for (int i = 0; i < IsOwnedFlags.Length; i++)
+                    IsOwnedFlags[i] = b.SerializeBits<bool>(IsOwnedFlags[i], 1, name: $"{nameof(IsOwnedFlags)}[{i}]");
             });
 
             s.DoBits<T>(b =>
             {
-                Flags_3 ??= new bool[Pre_Count - Pre_StartIndex];
+                IsFirstShownFlags ??= new bool[Pre_Count - Pre_StartIndex];
 
-                for (int i = 0; i < Flags_3.Length; i++)
-                    Flags_3[i] = b.SerializeBits<bool>(Flags_3[i], 1, name: $"{nameof(Flags_3)}[{i}]");
+                for (int i = 0; i < IsFirstShownFlags.Length; i++)
+                    IsFirstShownFlags[i] = b.SerializeBits<bool>(IsFirstShownFlags[i], 1, name: $"{nameof(IsFirstShownFlags)}[{i}]");
             });
 
             s.DoBits<T>(b =>
             {
-                Flags_4 ??= new bool[Pre_Count - Pre_StartIndex];
+                UnknownFlags ??= new bool[Pre_Count - Pre_StartIndex];
 
-                for (int i = 0; i < Flags_4.Length; i++)
-                    Flags_4[i] = b.SerializeBits<bool>(Flags_4[i], 1, name: $"{nameof(Flags_4)}[{i}]");
+                for (int i = 0; i < UnknownFlags.Length; i++)
+                    UnknownFlags[i] = b.SerializeBits<bool>(UnknownFlags[i], 1, name: $"{nameof(UnknownFlags)}[{i}]");
             });
         }
 
-        public enum ItemState : byte
+        public enum ItemStatus : byte
         {
             // Old version
             Old_NotPurchased = 0,
