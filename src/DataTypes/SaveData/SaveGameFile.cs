@@ -13,6 +13,8 @@ namespace BinarySerializer.UbiArt
         public T CONTENT { get; set; }
         public byte[] Footer { get; set; }
 
+        public uint Nintendo3DS_Uint_10C { get; set; } // A boolean?
+
         public byte Switch_Byte_00 { get; set; }
         public byte[] Switch_Bytes_81 { get; set; } // Padding?
         public uint Switch_SaveHeaderCRC { get; set; } // TODO: Should probably process this when serializing
@@ -34,6 +36,7 @@ namespace BinarySerializer.UbiArt
             s.DoEndian(settings.Game switch
             {
                 Game.RaymanOrigins when settings.Platform is Platform.PC => Endian.Little,
+                Game.RaymanOrigins when settings.Platform is Platform.Nintendo3DS => Endian.Little,
                 Game.RaymanLegends when settings.Platform is Platform.PC => Endian.Little,
                 Game.RaymanLegends when settings.Platform is Platform.PlayStation3 => Endian.Big,
                 Game.RaymanLegends when settings.Platform is Platform.Xbox360 => Endian.Big,
@@ -60,6 +63,8 @@ namespace BinarySerializer.UbiArt
                 Name = s.SerializeString(Name, length: settings.Game switch
                 {
                     Game.RaymanOrigins when settings.Platform is Platform.PC => 520,
+                    Game.RaymanOrigins when settings.Platform is Platform.Nintendo3DS => 256,
+                    Game.RaymanOrigins when settings.Platform is Platform.PC => 520,
                     Game.RaymanLegends when settings.Platform is Platform.PC => 520,
                     Game.RaymanLegends when settings.Platform is Platform.PlayStation3 => 128,
                     Game.RaymanLegends when settings.Platform is Platform.Xbox360 => 128,
@@ -68,6 +73,7 @@ namespace BinarySerializer.UbiArt
                 }, encoding: settings.Game switch
                 {
                     Game.RaymanOrigins when settings.Platform is Platform.PC => Encoding.Unicode,
+                    Game.RaymanOrigins when settings.Platform is Platform.Nintendo3DS => Encoding.Unicode,
                     Game.RaymanLegends when settings.Platform is Platform.PC => Encoding.Unicode,
                     Game.RaymanLegends when settings.Platform is Platform.PlayStation3 => Encoding.UTF8,
                     Game.RaymanLegends when settings.Platform is Platform.Xbox360 => Encoding.UTF8,
@@ -86,7 +92,14 @@ namespace BinarySerializer.UbiArt
                     refOut: false,
                     xorOut: 0xFFFFFFFF));
 
-                if (settings.Game == Game.RaymanLegends && settings.Platform == Platform.PlayStation3)
+                if (settings.Game == Game.RaymanOrigins && settings.Platform == Platform.Nintendo3DS)
+                {
+                    SaveDataLength = s.Serialize<uint>(SaveDataLength, name: nameof(SaveDataLength));
+                    SaveCodeCRC = s.Serialize<uint>(SaveCodeCRC, name: nameof(SaveCodeCRC));
+                    processor.Serialize<uint>(s, "SaveDataCRC");
+                    Nintendo3DS_Uint_10C = s.Serialize<uint>(Nintendo3DS_Uint_10C, name: nameof(Nintendo3DS_Uint_10C));
+                }
+                else if (settings.Game == Game.RaymanLegends && settings.Platform == Platform.PlayStation3)
                 {
                     PS3_Uint_80 = s.Serialize<uint>(PS3_Uint_80, name: nameof(PS3_Uint_80));
                     SaveDataLength = s.Serialize<uint>(SaveDataLength, name: nameof(SaveDataLength));
@@ -137,6 +150,7 @@ namespace BinarySerializer.UbiArt
                 Footer = s.SerializeArray<byte>(Footer, settings.Game switch
                 {
                     Game.RaymanOrigins when settings.Platform is Platform.PC => 288,
+                    Game.RaymanOrigins when settings.Platform is Platform.Nintendo3DS => 256,
                     Game.RaymanLegends when settings.Platform is Platform.PC => 400,
                     Game.RaymanLegends when settings.Platform is Platform.PlayStation3 => 0,
                     Game.RaymanLegends when settings.Platform is Platform.Xbox360 => 0,

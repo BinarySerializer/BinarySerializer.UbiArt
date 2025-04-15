@@ -42,8 +42,15 @@ namespace BinarySerializer.UbiArt
 
             public StringID[] CostumesUsed { get; set; }
 
+            public float Nintendo3DS_Float1 { get; set; }
+            public float Nintendo3DS_Float2 { get; set; }
+            public float Nintendo3DS_Float3 { get; set; }
+            public bool Nintendo3DS_Bool { get; set; }
+
             public override void SerializeImpl(SerializerObject s)
             {
+                UbiArtSettings settings = s.GetRequiredSettings<UbiArtSettings>();
+
                 Levels = s.SerializeUbiArtObjectArray<UbiArtObjKeyObjValuePair<StringID, Generic<PersistentGameData_Level>>>(Levels, name: nameof(Levels));
                 Rewards = s.SerializeObject<SaveSession>(Rewards, name: nameof(Rewards));
                 Score = s.SerializeObject<Ray_PersistentGameData_Score>(Score, name: nameof(Score));
@@ -53,8 +60,19 @@ namespace BinarySerializer.UbiArt
                 TeethReturned = s.Serialize<uint>(TeethReturned, name: nameof(TeethReturned));
                 UsedPlayerIDInfo = s.SerializeObject<StringID>(UsedPlayerIDInfo, name: nameof(UsedPlayerIDInfo));
                 SprintTutorialDisabled = s.Serialize<int>(SprintTutorialDisabled, name: nameof(SprintTutorialDisabled));
+
+                if (settings.Platform == Platform.Nintendo3DS)
+                    Nintendo3DS_Float1 = s.Serialize<float>(Nintendo3DS_Float1, name: nameof(Nintendo3DS_Float1));
+                
                 CostumeLastPrice = s.Serialize<uint>(CostumeLastPrice, name: nameof(CostumeLastPrice));
                 CostumesUsed = s.SerializeUbiArtObjectArray<StringID>(CostumesUsed, name: nameof(CostumesUsed));
+
+                if (settings.Platform == Platform.Nintendo3DS)
+                {
+                    Nintendo3DS_Float2 = s.Serialize<float>(Nintendo3DS_Float2, name: nameof(Nintendo3DS_Float2));
+                    Nintendo3DS_Float3 = s.Serialize<float>(Nintendo3DS_Float3, name: nameof(Nintendo3DS_Float3));
+                    Nintendo3DS_Bool = s.SerializeUbiArtBool(Nintendo3DS_Bool, name: nameof(Nintendo3DS_Bool));
+                }
             }
         }
 
