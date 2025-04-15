@@ -42,10 +42,10 @@ namespace BinarySerializer.UbiArt
 
             public StringID[] CostumesUsed { get; set; }
 
-            public float Nintendo3DS_Float1 { get; set; }
-            public float Nintendo3DS_Float2 { get; set; }
-            public float Nintendo3DS_Float3 { get; set; }
-            public bool Nintendo3DS_Bool { get; set; }
+            public float Nintendo3DS_PlayTime { get; set; } // Not 100% sure if this is correct
+            public float Nintendo3DS_SfxVolume { get; set; }
+            public float Nintendo3DS_MusicVolume { get; set; }
+            public bool Nintendo3DS_PlayIntro { get; set; }
 
             public override void SerializeImpl(SerializerObject s)
             {
@@ -62,16 +62,16 @@ namespace BinarySerializer.UbiArt
                 SprintTutorialDisabled = s.Serialize<int>(SprintTutorialDisabled, name: nameof(SprintTutorialDisabled));
 
                 if (settings.Platform == Platform.Nintendo3DS)
-                    Nintendo3DS_Float1 = s.Serialize<float>(Nintendo3DS_Float1, name: nameof(Nintendo3DS_Float1));
+                    Nintendo3DS_PlayTime = s.Serialize<float>(Nintendo3DS_PlayTime, name: nameof(Nintendo3DS_PlayTime));
                 
                 CostumeLastPrice = s.Serialize<uint>(CostumeLastPrice, name: nameof(CostumeLastPrice));
                 CostumesUsed = s.SerializeUbiArtObjectArray<StringID>(CostumesUsed, name: nameof(CostumesUsed));
 
                 if (settings.Platform == Platform.Nintendo3DS)
                 {
-                    Nintendo3DS_Float2 = s.Serialize<float>(Nintendo3DS_Float2, name: nameof(Nintendo3DS_Float2));
-                    Nintendo3DS_Float3 = s.Serialize<float>(Nintendo3DS_Float3, name: nameof(Nintendo3DS_Float3));
-                    Nintendo3DS_Bool = s.SerializeUbiArtBool(Nintendo3DS_Bool, name: nameof(Nintendo3DS_Bool));
+                    Nintendo3DS_SfxVolume = s.Serialize<float>(Nintendo3DS_SfxVolume, name: nameof(Nintendo3DS_SfxVolume));
+                    Nintendo3DS_MusicVolume = s.Serialize<float>(Nintendo3DS_MusicVolume, name: nameof(Nintendo3DS_MusicVolume));
+                    Nintendo3DS_PlayIntro = s.SerializeUbiArtBool(Nintendo3DS_PlayIntro, name: nameof(Nintendo3DS_PlayIntro));
                 }
             }
         }
