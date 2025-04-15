@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using static BinarySerializer.UbiArt.Legends_SaveData;
+﻿using static BinarySerializer.UbiArt.Legends_SaveData;
 
 namespace BinarySerializer.UbiArt
 {

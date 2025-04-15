@@ -17,7 +17,13 @@ namespace BinarySerializer.UbiArt
 
         public byte Switch_Byte_00 { get; set; }
         public byte[] Switch_Bytes_81 { get; set; } // Padding?
-        public uint Switch_SaveHeaderCRC { get; set; } // TODO: Should probably process this when serializing
+
+        public uint WiiU_Uint_00 { get; set; }
+        public byte WiiU_Byte_04 { get; set; }
+        public byte[] WiiU_Bytes_85 { get; set; } // Padding?
+        public uint WiiU_Uint_8C { get; set; }
+        public uint WiiU_Uint_94 { get; set; }
+        public uint WiiU_Uint_98 { get; set; }
 
         public uint PS3_Uint_80 { get; set; }
         public uint PS3_Uint_88 { get; set; } // Seems unused?
@@ -38,6 +44,7 @@ namespace BinarySerializer.UbiArt
                 Game.RaymanOrigins when settings.Platform is Platform.PC => Endian.Little,
                 Game.RaymanOrigins when settings.Platform is Platform.Nintendo3DS => Endian.Little,
                 Game.RaymanLegends when settings.Platform is Platform.PC => Endian.Little,
+                Game.RaymanLegends when settings.Platform is Platform.WiiU => Endian.Big,
                 Game.RaymanLegends when settings.Platform is Platform.PlayStation3 => Endian.Big,
                 Game.RaymanLegends when settings.Platform is Platform.Xbox360 => Endian.Big,
                 Game.RaymanLegends when settings.Platform is Platform.NintendoSwitch => Endian.Little,
@@ -46,7 +53,12 @@ namespace BinarySerializer.UbiArt
             {
                 ChecksumCustomCRC32Processor headerProcessor = null;
 
-                if (settings.Game == Game.RaymanLegends && settings.Platform == Platform.NintendoSwitch)
+                if (settings.Game == Game.RaymanLegends && settings.Platform == Platform.WiiU)
+                {
+                    WiiU_Uint_00 = s.Serialize<uint>(WiiU_Uint_00, name: nameof(WiiU_Uint_00));
+                    WiiU_Byte_04 = s.Serialize<byte>(WiiU_Byte_04, name: nameof(WiiU_Byte_04));
+                }
+                else if (settings.Game == Game.RaymanLegends && settings.Platform == Platform.NintendoSwitch)
                 {
                     headerProcessor = new ChecksumCustomCRC32Processor(new ChecksumCustomCRC32Processor.CRCParameters(
                         hashSize: 32,
@@ -66,6 +78,7 @@ namespace BinarySerializer.UbiArt
                     Game.RaymanOrigins when settings.Platform is Platform.Nintendo3DS => 256,
                     Game.RaymanOrigins when settings.Platform is Platform.PC => 520,
                     Game.RaymanLegends when settings.Platform is Platform.PC => 520,
+                    Game.RaymanLegends when settings.Platform is Platform.WiiU => 128,
                     Game.RaymanLegends when settings.Platform is Platform.PlayStation3 => 128,
                     Game.RaymanLegends when settings.Platform is Platform.Xbox360 => 128,
                     Game.RaymanLegends when settings.Platform is Platform.NintendoSwitch => 128,
@@ -75,13 +88,16 @@ namespace BinarySerializer.UbiArt
                     Game.RaymanOrigins when settings.Platform is Platform.PC => Encoding.Unicode,
                     Game.RaymanOrigins when settings.Platform is Platform.Nintendo3DS => Encoding.Unicode,
                     Game.RaymanLegends when settings.Platform is Platform.PC => Encoding.Unicode,
+                    Game.RaymanLegends when settings.Platform is Platform.WiiU => Encoding.UTF8,
                     Game.RaymanLegends when settings.Platform is Platform.PlayStation3 => Encoding.UTF8,
                     Game.RaymanLegends when settings.Platform is Platform.Xbox360 => Encoding.UTF8,
                     Game.RaymanLegends when settings.Platform is Platform.NintendoSwitch => Encoding.UTF8,
                     _ => throw new ArgumentOutOfRangeException()
                 }, name: nameof(Name));
 
-                if (settings.Game == Game.RaymanLegends && settings.Platform == Platform.NintendoSwitch)
+                if (settings.Game == Game.RaymanLegends && settings.Platform == Platform.WiiU)
+                    WiiU_Bytes_85 = s.SerializeArray<byte>(WiiU_Bytes_85, 3, name: nameof(WiiU_Bytes_85));
+                else if (settings.Game == Game.RaymanLegends && settings.Platform == Platform.NintendoSwitch)
                     Switch_Bytes_81 = s.SerializeArray<byte>(Switch_Bytes_81, 3, name: nameof(Switch_Bytes_81));
 
                 ChecksumCustomCRC32Processor processor = new(new ChecksumCustomCRC32Processor.CRCParameters(
@@ -98,6 +114,14 @@ namespace BinarySerializer.UbiArt
                     SaveCodeCRC = s.Serialize<uint>(SaveCodeCRC, name: nameof(SaveCodeCRC));
                     processor.Serialize<uint>(s, "SaveDataCRC");
                     Nintendo3DS_Uint_10C = s.Serialize<uint>(Nintendo3DS_Uint_10C, name: nameof(Nintendo3DS_Uint_10C));
+                }
+                else if (settings.Game == Game.RaymanLegends && settings.Platform == Platform.WiiU)
+                {
+                    SaveDataLength = s.Serialize<uint>(SaveDataLength, name: nameof(SaveDataLength));
+                    WiiU_Uint_8C = s.Serialize<uint>(WiiU_Uint_8C, name: nameof(WiiU_Uint_8C));
+                    processor.Serialize<uint>(s, "SaveDataCRC");
+                    WiiU_Uint_94 = s.Serialize<uint>(WiiU_Uint_94, name: nameof(WiiU_Uint_94));
+                    WiiU_Uint_98 = s.Serialize<uint>(WiiU_Uint_98, name: nameof(WiiU_Uint_98));
                 }
                 else if (settings.Game == Game.RaymanLegends && settings.Platform == Platform.PlayStation3)
                 {
@@ -152,6 +176,7 @@ namespace BinarySerializer.UbiArt
                     Game.RaymanOrigins when settings.Platform is Platform.PC => 288,
                     Game.RaymanOrigins when settings.Platform is Platform.Nintendo3DS => 256,
                     Game.RaymanLegends when settings.Platform is Platform.PC => 400,
+                    Game.RaymanLegends when settings.Platform is Platform.WiiU => 0,
                     Game.RaymanLegends when settings.Platform is Platform.PlayStation3 => 0,
                     Game.RaymanLegends when settings.Platform is Platform.Xbox360 => 0,
                     Game.RaymanLegends when settings.Platform is Platform.NintendoSwitch => 0,
@@ -159,7 +184,7 @@ namespace BinarySerializer.UbiArt
                 }, name: nameof(Footer));
 
                 // Padded with a total length of 0x40000
-                if (settings.Game == Game.RaymanLegends && settings.Platform is Platform.PlayStation3 or Platform.Xbox360)
+                if (settings.Game == Game.RaymanLegends && settings.Platform is Platform.WiiU or Platform.PlayStation3 or Platform.Xbox360)
                     s.SerializePadding(Offset + 0x40000 - s.CurrentPointer);
             });
         }
