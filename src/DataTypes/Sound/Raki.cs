@@ -40,7 +40,7 @@
         {
             Version = s.Serialize<uint>(Version, name: nameof(Version));
 
-            if (Version != 11)
+            if (Version is not (11 or 15))
                 throw new UnsupportedFormatVersionException(this, $"RAKI version {Version} is not supported");
 
             // The endian is dependent on the platform
@@ -48,6 +48,7 @@
             Endian endian = settings.Platform switch
             {
                 UbiArt.Platform.PC => Endian.Little,
+                UbiArt.Platform.PlayStation4 => Endian.Little,
                 _ => throw new BinarySerializableException(this, $"Serializing RAKI is not currently supported for the platform {settings.Platform}")
             };
             s.DoEndian(endian, () =>
