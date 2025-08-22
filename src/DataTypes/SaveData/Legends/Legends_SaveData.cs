@@ -107,6 +107,22 @@ namespace BinarySerializer.UbiArt
 
             public uint TicketReminderMessageCount { get; set; }
 
+            public bool PSVita_Unknown1 { get; set; }
+            public bool PSVita_Unknown2 { get; set; }
+            public uint PSVita_Unknown3 { get; set; }
+            public uint PSVita_Unknown4 { get; set; }
+            public uint PSVita_Unknown5 { get; set; }
+            public uint PSVita_Unknown6 { get; set; }
+            public uint PSVita_Unknown7 { get; set; }
+            public bool PSVita_Unknown8 { get; set; }
+            public bool PSVita_Unknown9 { get; set; }
+            public bool PSVita_UnknownA { get; set; }
+            public bool PSVita_UnknownB { get; set; }
+            public bool PSVita_UnknownC { get; set; }
+            public bool PSVita_UnknownD { get; set; }
+            public bool PSVita_UnknownE { get; set; }
+            public bool PSVita_UnknownF { get; set; }
+
             public uint DisplayGhosts { get; set; }
 
             public bool UplayDoneAction0 { get; set; }
@@ -144,6 +160,11 @@ namespace BinarySerializer.UbiArt
             public bool BarbaraCostumeUnlockSeen { get; set; }
 
             public StringID[] WorldUnlockMessagesSeen { get; set; }
+
+            public bool PSVita_UnknownUnlockSeen1 { get; set; }
+            public bool PSVita_UnknownUnlockSeen2 { get; set; }
+            public bool PSVita_UnknownUnlockSeen3 { get; set; }
+            public bool PSVita_UnknownUnlockSeen4 { get; set; }
 
             public bool RetroWorldUnlockMessageSeen { get; set; }
 
@@ -213,7 +234,11 @@ namespace BinarySerializer.UbiArt
                 Messages_localDate = s.SerializeObject<DateTime>(Messages_localDate, name: nameof(Messages_localDate));
                 Messages_readDrcCount = s.Serialize<uint>(Messages_readDrcCount, name: nameof(Messages_readDrcCount));
                 Messages_interactDrcCount = s.Serialize<uint>(Messages_interactDrcCount, name: nameof(Messages_interactDrcCount));
-                Messages_lastSeenMessageHandle = s.Serialize<uint>(Messages_lastSeenMessageHandle, name: nameof(Messages_lastSeenMessageHandle));
+
+                // NOTE: Not 100% sure this is the missing value on PS Vita, but looks like it
+                if (s.GetRequiredSettings<UbiArtSettings>().Platform != Platform.PSVita)
+                    Messages_lastSeenMessageHandle = s.Serialize<uint>(Messages_lastSeenMessageHandle, name: nameof(Messages_lastSeenMessageHandle));
+                
                 Messages_tutoCount = s.Serialize<uint>(Messages_tutoCount, name: nameof(Messages_tutoCount));
                 Messages_drcCountSinceLastInteract = s.Serialize<uint>(Messages_drcCountSinceLastInteract, name: nameof(Messages_drcCountSinceLastInteract));
                 PlayerCard_displayedCount = s.Serialize<uint>(PlayerCard_displayedCount, name: nameof(PlayerCard_displayedCount));
@@ -244,46 +269,85 @@ namespace BinarySerializer.UbiArt
                 LuckyTicketsRewardGivenCounter = s.Serialize<uint>(LuckyTicketsRewardGivenCounter, name: nameof(LuckyTicketsRewardGivenCounter));
                 ConsecutiveLuckyTicketCount = s.Serialize<uint>(ConsecutiveLuckyTicketCount, name: nameof(ConsecutiveLuckyTicketCount));
                 TicketReminderMessageCount = s.Serialize<uint>(TicketReminderMessageCount, name: nameof(TicketReminderMessageCount));
-                DisplayGhosts = s.Serialize<uint>(DisplayGhosts, name: nameof(DisplayGhosts));
-                UplayDoneAction0 = s.SerializeUbiArtBool(UplayDoneAction0, name: nameof(UplayDoneAction0));
-                UplayDoneAction1 = s.SerializeUbiArtBool(UplayDoneAction1, name: nameof(UplayDoneAction1));
-                UplayDoneAction2 = s.SerializeUbiArtBool(UplayDoneAction2, name: nameof(UplayDoneAction2));
-                UplayDoneAction3 = s.SerializeUbiArtBool(UplayDoneAction3, name: nameof(UplayDoneAction3));
 
-                if (s.GetRequiredSettings<UbiArtSettings>().Platform == Platform.NintendoSwitch)
-                    UplayDoneAction4 = s.SerializeUbiArtBool(UplayDoneAction4, name: nameof(UplayDoneAction4));
+                if (s.GetRequiredSettings<UbiArtSettings>().Platform == Platform.PSVita)
+                {
+                    PSVita_Unknown1 = s.SerializeUbiArtBool(PSVita_Unknown1, name: nameof(PSVita_Unknown1));
+                    PSVita_Unknown2 = s.SerializeUbiArtBool(PSVita_Unknown2, name: nameof(PSVita_Unknown2));
+                    PSVita_Unknown3 = s.Serialize<uint>(PSVita_Unknown3, name: nameof(PSVita_Unknown3));
+                    PSVita_Unknown4 = s.Serialize<uint>(PSVita_Unknown4, name: nameof(PSVita_Unknown4));
+                    PSVita_Unknown5 = s.Serialize<uint>(PSVita_Unknown5, name: nameof(PSVita_Unknown5));
+                    PSVita_Unknown6 = s.Serialize<uint>(PSVita_Unknown6, name: nameof(PSVita_Unknown6));
+                    PSVita_Unknown7 = s.Serialize<uint>(PSVita_Unknown7, name: nameof(PSVita_Unknown7));
+                    PSVita_Unknown8 = s.SerializeUbiArtBool(PSVita_Unknown8, name: nameof(PSVita_Unknown8));
+                    PSVita_Unknown9 = s.SerializeUbiArtBool(PSVita_Unknown9, name: nameof(PSVita_Unknown9));
+                    PSVita_UnknownA = s.SerializeUbiArtBool(PSVita_UnknownA, name: nameof(PSVita_UnknownA));
+                    PSVita_UnknownB = s.SerializeUbiArtBool(PSVita_UnknownB, name: nameof(PSVita_UnknownB));
+                    PSVita_UnknownC = s.SerializeUbiArtBool(PSVita_UnknownC, name: nameof(PSVita_UnknownC));
+                    PSVita_UnknownD = s.SerializeUbiArtBool(PSVita_UnknownD, name: nameof(PSVita_UnknownD));
+                    PSVita_UnknownE = s.SerializeUbiArtBool(PSVita_UnknownE, name: nameof(PSVita_UnknownE));
+                    PSVita_UnknownF = s.SerializeUbiArtBool(PSVita_UnknownF, name: nameof(PSVita_UnknownF));
+                }
+                else
+                {
+                    DisplayGhosts = s.Serialize<uint>(DisplayGhosts, name: nameof(DisplayGhosts));
+                    UplayDoneAction0 = s.SerializeUbiArtBool(UplayDoneAction0, name: nameof(UplayDoneAction0));
+                    UplayDoneAction1 = s.SerializeUbiArtBool(UplayDoneAction1, name: nameof(UplayDoneAction1));
+                    UplayDoneAction2 = s.SerializeUbiArtBool(UplayDoneAction2, name: nameof(UplayDoneAction2));
+                    UplayDoneAction3 = s.SerializeUbiArtBool(UplayDoneAction3, name: nameof(UplayDoneAction3));
 
-                UplayDoneReward0 = s.SerializeUbiArtBool(UplayDoneReward0, name: nameof(UplayDoneReward0));
-                UplayDoneReward1 = s.SerializeUbiArtBool(UplayDoneReward1, name: nameof(UplayDoneReward1));
-                UplayDoneReward2 = s.SerializeUbiArtBool(UplayDoneReward2, name: nameof(UplayDoneReward2));
-                UplayDoneReward3 = s.SerializeUbiArtBool(UplayDoneReward3, name: nameof(UplayDoneReward3));
+                    if (s.GetRequiredSettings<UbiArtSettings>().Platform == Platform.NintendoSwitch)
+                        UplayDoneAction4 = s.SerializeUbiArtBool(UplayDoneAction4, name: nameof(UplayDoneAction4));
 
-                if (s.GetRequiredSettings<UbiArtSettings>().Platform == Platform.NintendoSwitch)
-                    UplayDoneReward4 = s.SerializeUbiArtBool(UplayDoneReward4, name: nameof(UplayDoneReward4));
+                    UplayDoneReward0 = s.SerializeUbiArtBool(UplayDoneReward0, name: nameof(UplayDoneReward0));
+                    UplayDoneReward1 = s.SerializeUbiArtBool(UplayDoneReward1, name: nameof(UplayDoneReward1));
+                    UplayDoneReward2 = s.SerializeUbiArtBool(UplayDoneReward2, name: nameof(UplayDoneReward2));
+                    UplayDoneReward3 = s.SerializeUbiArtBool(UplayDoneReward3, name: nameof(UplayDoneReward3));
+
+                    if (s.GetRequiredSettings<UbiArtSettings>().Platform == Platform.NintendoSwitch)
+                        UplayDoneReward4 = s.SerializeUbiArtBool(UplayDoneReward4, name: nameof(UplayDoneReward4));
+                }
 
                 PlayedDiamondCupSequence = s.SerializeUbiArtObjectArray<StringID>(PlayedDiamondCupSequence, name: nameof(PlayedDiamondCupSequence));
                 Costumes = s.SerializeUbiArtObjectArray<StringID>(Costumes, name: nameof(Costumes));
-                PlayedChallenge = s.SerializeUbiArtArray<uint>(PlayedChallenge, name: nameof(PlayedChallenge));
-                PlayedInvasion = s.SerializeUbiArtObjectArray<StringID>(PlayedInvasion, name: nameof(PlayedInvasion));
+
+                if (s.GetRequiredSettings<UbiArtSettings>().Platform != Platform.PSVita)
+                {
+                    PlayedChallenge = s.SerializeUbiArtArray<uint>(PlayedChallenge, name: nameof(PlayedChallenge));
+                    PlayedInvasion = s.SerializeUbiArtObjectArray<StringID>(PlayedInvasion, name: nameof(PlayedInvasion));
+                }
+
                 TvOffOptionEnabledNb = s.Serialize<uint>(TvOffOptionEnabledNb, name: nameof(TvOffOptionEnabledNb));
                 TvOffOptionActivatedTime = s.Serialize<uint>(TvOffOptionActivatedTime, name: nameof(TvOffOptionActivatedTime));
                 BarbaraCostumeUnlockSeen = s.SerializeUbiArtBool(BarbaraCostumeUnlockSeen, name: nameof(BarbaraCostumeUnlockSeen));
                 WorldUnlockMessagesSeen = s.SerializeUbiArtObjectArray<StringID>(WorldUnlockMessagesSeen, name: nameof(WorldUnlockMessagesSeen));
-                RetroWorldUnlockMessageSeen = s.SerializeUbiArtBool(RetroWorldUnlockMessageSeen, name: nameof(RetroWorldUnlockMessageSeen));
 
-                if (s.GetRequiredSettings<UbiArtSettings>().Platform == Platform.NintendoSwitch)
+                if (s.GetRequiredSettings<UbiArtSettings>().Platform == Platform.PSVita)
                 {
-                    MurphyGalleryUnlockMessageSeen = s.SerializeUbiArtBool(MurphyGalleryUnlockMessageSeen, name: nameof(MurphyGalleryUnlockMessageSeen));
-                    MurphyWorldUnlockMessageSeen = s.SerializeUbiArtBool(MurphyWorldUnlockMessageSeen, name: nameof(MurphyWorldUnlockMessageSeen));
-                    MurphyLevelDoneCount = s.Serialize<uint>(MurphyLevelDoneCount, name: nameof(MurphyLevelDoneCount));
+                    PSVita_UnknownUnlockSeen1 = s.SerializeUbiArtBool(PSVita_UnknownUnlockSeen1, name: nameof(PSVita_UnknownUnlockSeen1));
+                    PSVita_UnknownUnlockSeen2 = s.SerializeUbiArtBool(PSVita_UnknownUnlockSeen2, name: nameof(PSVita_UnknownUnlockSeen2));
+                    PSVita_UnknownUnlockSeen3 = s.SerializeUbiArtBool(PSVita_UnknownUnlockSeen3, name: nameof(PSVita_UnknownUnlockSeen3));
+                    PSVita_UnknownUnlockSeen4 = s.SerializeUbiArtBool(PSVita_UnknownUnlockSeen4, name: nameof(PSVita_UnknownUnlockSeen4));
+                }
+                else
+                {
+                    RetroWorldUnlockMessageSeen = s.SerializeUbiArtBool(RetroWorldUnlockMessageSeen, name: nameof(RetroWorldUnlockMessageSeen));
+
+                    if (s.GetRequiredSettings<UbiArtSettings>().Platform == Platform.NintendoSwitch)
+                    {
+                        MurphyGalleryUnlockMessageSeen = s.SerializeUbiArtBool(MurphyGalleryUnlockMessageSeen, name: nameof(MurphyGalleryUnlockMessageSeen));
+                        MurphyWorldUnlockMessageSeen = s.SerializeUbiArtBool(MurphyWorldUnlockMessageSeen, name: nameof(MurphyWorldUnlockMessageSeen));
+                        MurphyLevelDoneCount = s.Serialize<uint>(MurphyLevelDoneCount, name: nameof(MurphyLevelDoneCount));
+                    }
+
+                    FreedAllTeensiesMessageSeen = s.SerializeUbiArtBool(FreedAllTeensiesMessageSeen, name: nameof(FreedAllTeensiesMessageSeen));
+                    MisterDarkCompletionMessageSeen = s.SerializeUbiArtBool(MisterDarkCompletionMessageSeen, name: nameof(MisterDarkCompletionMessageSeen));
+                    FirstInvasionMessageSeen = s.SerializeUbiArtBool(FirstInvasionMessageSeen, name: nameof(FirstInvasionMessageSeen));
+                    InvitationTutoSeen = s.SerializeUbiArtBool(InvitationTutoSeen, name: nameof(InvitationTutoSeen));
+                    MessageSeen8Bit = s.SerializeUbiArtBool(MessageSeen8Bit, name: nameof(MessageSeen8Bit));
+                    ChallengeWorldUnlockMessageSeen = s.SerializeUbiArtBool(ChallengeWorldUnlockMessageSeen, name: nameof(ChallengeWorldUnlockMessageSeen));
                 }
 
-                FreedAllTeensiesMessageSeen = s.SerializeUbiArtBool(FreedAllTeensiesMessageSeen, name: nameof(FreedAllTeensiesMessageSeen));
-                MisterDarkCompletionMessageSeen = s.SerializeUbiArtBool(MisterDarkCompletionMessageSeen, name: nameof(MisterDarkCompletionMessageSeen));
-                FirstInvasionMessageSeen = s.SerializeUbiArtBool(FirstInvasionMessageSeen, name: nameof(FirstInvasionMessageSeen));
-                InvitationTutoSeen = s.SerializeUbiArtBool(InvitationTutoSeen, name: nameof(InvitationTutoSeen));
-                MessageSeen8Bit = s.SerializeUbiArtBool(MessageSeen8Bit, name: nameof(MessageSeen8Bit));
-                ChallengeWorldUnlockMessageSeen = s.SerializeUbiArtBool(ChallengeWorldUnlockMessageSeen, name: nameof(ChallengeWorldUnlockMessageSeen));
                 DoorUnlockMessageSeen = s.SerializeUbiArtObjectArray<StringID>(DoorUnlockMessageSeen, name: nameof(DoorUnlockMessageSeen));
                 DoorUnlockDRCMessageRequired = s.SerializeUbiArtObjectArray<StringID>(DoorUnlockDRCMessageRequired, name: nameof(DoorUnlockDRCMessageRequired));
                 LuckyTicketRewardWorldName = s.SerializeObject<StringID>(LuckyTicketRewardWorldName, name: nameof(LuckyTicketRewardWorldName));
@@ -291,10 +355,14 @@ namespace BinarySerializer.UbiArt
                 if (s.GetRequiredSettings<UbiArtSettings>().Platform == Platform.NintendoSwitch)
                     ShareScreenTutoFulfilled = s.SerializeUbiArtBool(ShareScreenTutoFulfilled, name: nameof(ShareScreenTutoFulfilled));
 
-                IsUGCMiiverseWarningSet = s.SerializeUbiArtBool(IsUGCMiiverseWarningSet, name: nameof(IsUGCMiiverseWarningSet));
-                Reward39Failed = s.Serialize<int>(Reward39Failed, name: nameof(Reward39Failed));
-                UnlockPrivilegesData = s.SerializeObject<String8>(UnlockPrivilegesData, name: nameof(UnlockPrivilegesData));
-                IsDemoRewardChecked = s.Serialize<int>(IsDemoRewardChecked, name: nameof(IsDemoRewardChecked));
+                if (s.GetRequiredSettings<UbiArtSettings>().Platform != Platform.PSVita)
+                {
+                    IsUGCMiiverseWarningSet = s.SerializeUbiArtBool(IsUGCMiiverseWarningSet, name: nameof(IsUGCMiiverseWarningSet));
+                    Reward39Failed = s.Serialize<int>(Reward39Failed, name: nameof(Reward39Failed));
+                    UnlockPrivilegesData = s.SerializeObject<String8>(UnlockPrivilegesData, name: nameof(UnlockPrivilegesData));
+                    IsDemoRewardChecked = s.Serialize<int>(IsDemoRewardChecked, name: nameof(IsDemoRewardChecked));
+                }
+
                 PrisonerDataDummy = s.SerializeObject<PrisonerData>(PrisonerDataDummy, name: nameof(PrisonerDataDummy));
                 PersistentGameDataLevelDummy = s.SerializeObject<PersistentGameData_Level>(PersistentGameDataLevelDummy, name: nameof(PersistentGameDataLevelDummy));
                 MessageDummy = s.SerializeObject<Message>(MessageDummy, name: nameof(MessageDummy));
@@ -432,6 +500,8 @@ namespace BinarySerializer.UbiArt
 
             public int OnlineSynced { get; set; }
 
+            public bool PSVita_Unknown { get; set; }
+
             #endregion
 
             #region Public Methods
@@ -439,19 +509,35 @@ namespace BinarySerializer.UbiArt
             public override void SerializeImpl(SerializerObject s)
             {
                 Id = s.SerializeObject<StringID>(Id, name: nameof(Id));
-                BestLumsTaken = s.Serialize<uint>(BestLumsTaken, name: nameof(BestLumsTaken));
-                BestDistance = s.Serialize<float>(BestDistance, name: nameof(BestDistance));
+
+                if (s.GetRequiredSettings<UbiArtSettings>().Platform != Platform.PSVita)
+                {
+                    BestLumsTaken = s.Serialize<uint>(BestLumsTaken, name: nameof(BestLumsTaken));
+                    BestDistance = s.Serialize<float>(BestDistance, name: nameof(BestDistance));
+                }
+
                 BestTime = s.Serialize<float>(BestTime, name: nameof(BestTime));
+
+                if (s.GetRequiredSettings<UbiArtSettings>().Platform == Platform.PSVita)
+                    PSVita_Unknown = s.SerializeUbiArtBool(PSVita_Unknown, name: nameof(PSVita_Unknown));
+
                 FreedPrisoners = s.SerializeUbiArtObjectArray<PrisonerData>(FreedPrisoners, name: nameof(FreedPrisoners));
                 Cups = s.Serialize<uint>(Cups, name: nameof(Cups));
                 Medals = s.Serialize<uint>(Medals, name: nameof(Medals));
                 Completed = s.SerializeUbiArtBool(Completed, name: nameof(Completed));
                 IsVisited = s.SerializeUbiArtBool(IsVisited, name: nameof(IsVisited));
-                BestTimeSent = s.SerializeUbiArtBool(BestTimeSent, name: nameof(BestTimeSent));
+
+                if (s.GetRequiredSettings<UbiArtSettings>().Platform != Platform.PSVita)
+                    BestTimeSent = s.SerializeUbiArtBool(BestTimeSent, name: nameof(BestTimeSent));
+
                 Type = s.Serialize<uint>(Type, name: nameof(Type));
                 LuckyTicketsLeft = s.Serialize<uint>(LuckyTicketsLeft, name: nameof(LuckyTicketsLeft));
-                SequenceAlreadySeen = s.SerializeUbiArtObjectArray<ObjectPath>(SequenceAlreadySeen, name: nameof(SequenceAlreadySeen));
-                OnlineSynced = s.Serialize<int>(OnlineSynced, name: nameof(OnlineSynced));
+
+                if (s.GetRequiredSettings<UbiArtSettings>().Platform != Platform.PSVita)
+                {
+                    SequenceAlreadySeen = s.SerializeUbiArtObjectArray<ObjectPath>(SequenceAlreadySeen, name: nameof(SequenceAlreadySeen));
+                    OnlineSynced = s.Serialize<int>(OnlineSynced, name: nameof(OnlineSynced));
+                }
             }
 
             #endregion
@@ -469,7 +555,9 @@ namespace BinarySerializer.UbiArt
             {
                 Tags = s.SerializeUbiArtArray<float>(Tags, name: nameof(Tags));
                 Timers = s.SerializeUbiArtArray<float>(Timers, name: nameof(Timers));
-                RewardsState = s.SerializeUbiArtObjectArray<UbiArtObjKeyValuePair<StringID, bool>>(RewardsState, name: nameof(RewardsState));
+                
+                if (s.GetRequiredSettings<UbiArtSettings>().Platform != Platform.PSVita)
+                    RewardsState = s.SerializeUbiArtObjectArray<UbiArtObjKeyValuePair<StringID, bool>>(RewardsState, name: nameof(RewardsState));
             }
         }
 
@@ -487,6 +575,8 @@ namespace BinarySerializer.UbiArt
 
             public int TempLumsCount { get; set; }
 
+            public int PSVita_Unknown { get; set; }
+
             #endregion
 
             #region Public Methods
@@ -498,6 +588,9 @@ namespace BinarySerializer.UbiArt
                 LocalLumsCount = s.Serialize<int>(LocalLumsCount, name: nameof(LocalLumsCount));
                 PendingLumsCount = s.Serialize<int>(PendingLumsCount, name: nameof(PendingLumsCount));
                 TempLumsCount = s.Serialize<int>(TempLumsCount, name: nameof(TempLumsCount));
+
+                if (s.GetRequiredSettings<UbiArtSettings>().Platform == Platform.PSVita)
+                    PSVita_Unknown = s.Serialize<int>(PSVita_Unknown, name: nameof(PSVita_Unknown));
             }
 
             #endregion

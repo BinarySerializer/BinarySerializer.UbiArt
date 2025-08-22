@@ -35,6 +35,10 @@ namespace BinarySerializer.UbiArt
         public uint Xbox360_Uint_90 { get; set; }
         public uint Xbox360_Uint_94 { get; set; }
 
+        public string PSVita_SaveFileName { get; set; }
+        public uint PSVita_Uint_188 { get; set; }
+        public uint PSVita_Uint_18C { get; set; }
+
         public override void SerializeImpl(SerializerObject s)
         {
             UbiArtSettings settings = s.GetRequiredSettings<UbiArtSettings>();
@@ -46,6 +50,7 @@ namespace BinarySerializer.UbiArt
                 Game.RaymanLegends when settings.Platform is Platform.PC => Endian.Little,
                 Game.RaymanLegends when settings.Platform is Platform.WiiU => Endian.Big,
                 Game.RaymanLegends when settings.Platform is Platform.PlayStation3 => Endian.Big,
+                Game.RaymanLegends when settings.Platform is Platform.PSVita => Endian.Little,
                 Game.RaymanLegends when settings.Platform is Platform.Xbox360 => Endian.Big,
                 Game.RaymanLegends when settings.Platform is Platform.NintendoSwitch => Endian.Little,
                 _ => throw new ArgumentOutOfRangeException()
@@ -57,6 +62,10 @@ namespace BinarySerializer.UbiArt
                 {
                     WiiU_Uint_00 = s.Serialize<uint>(WiiU_Uint_00, name: nameof(WiiU_Uint_00));
                     WiiU_Byte_04 = s.Serialize<byte>(WiiU_Byte_04, name: nameof(WiiU_Byte_04));
+                }
+                else if (settings.Game == Game.RaymanLegends && settings.Platform == Platform.PSVita)
+                {
+                    PSVita_SaveFileName = s.SerializeString(PSVita_SaveFileName, 128, encoding: Encoding.UTF8, name: nameof(PSVita_SaveFileName));
                 }
                 else if (settings.Game == Game.RaymanLegends && settings.Platform == Platform.NintendoSwitch)
                 {
@@ -80,6 +89,7 @@ namespace BinarySerializer.UbiArt
                     Game.RaymanLegends when settings.Platform is Platform.PC => 520,
                     Game.RaymanLegends when settings.Platform is Platform.WiiU => 128,
                     Game.RaymanLegends when settings.Platform is Platform.PlayStation3 => 128,
+                    Game.RaymanLegends when settings.Platform is Platform.PSVita => 256,
                     Game.RaymanLegends when settings.Platform is Platform.Xbox360 => 128,
                     Game.RaymanLegends when settings.Platform is Platform.NintendoSwitch => 128,
                     _ => throw new ArgumentOutOfRangeException()
@@ -90,6 +100,7 @@ namespace BinarySerializer.UbiArt
                     Game.RaymanLegends when settings.Platform is Platform.PC => Encoding.Unicode,
                     Game.RaymanLegends when settings.Platform is Platform.WiiU => Encoding.UTF8,
                     Game.RaymanLegends when settings.Platform is Platform.PlayStation3 => Encoding.UTF8,
+                    Game.RaymanLegends when settings.Platform is Platform.PSVita => Encoding.Unicode,
                     Game.RaymanLegends when settings.Platform is Platform.Xbox360 => Encoding.UTF8,
                     Game.RaymanLegends when settings.Platform is Platform.NintendoSwitch => Encoding.UTF8,
                     _ => throw new ArgumentOutOfRangeException()
@@ -142,6 +153,13 @@ namespace BinarySerializer.UbiArt
                     Xbox360_Uint_90 = s.Serialize<uint>(Xbox360_Uint_90, name: nameof(Xbox360_Uint_90));
                     Xbox360_Uint_94 = s.Serialize<uint>(Xbox360_Uint_94, name: nameof(Xbox360_Uint_94));
                 }
+                else if (settings.Game == Game.RaymanLegends && settings.Platform == Platform.PSVita)
+                {
+                    SaveDataLength = s.Serialize<uint>(SaveDataLength, name: nameof(SaveDataLength));
+                    processor.Serialize<uint>(s, "SaveDataCRC");
+                    PSVita_Uint_188 = s.Serialize<uint>(PSVita_Uint_188, name: nameof(PSVita_Uint_188));
+                    PSVita_Uint_18C = s.Serialize<uint>(PSVita_Uint_18C, name: nameof(PSVita_Uint_18C));
+                }
                 else if (settings.Game == Game.RaymanLegends && settings.Platform == Platform.NintendoSwitch)
                 {
                     processor.Serialize<uint>(s, "SaveDataCRC");
@@ -179,6 +197,7 @@ namespace BinarySerializer.UbiArt
                     Game.RaymanLegends when settings.Platform is Platform.WiiU => 0,
                     Game.RaymanLegends when settings.Platform is Platform.PlayStation3 => 0,
                     Game.RaymanLegends when settings.Platform is Platform.Xbox360 => 0,
+                    Game.RaymanLegends when settings.Platform is Platform.PSVita => 0,
                     Game.RaymanLegends when settings.Platform is Platform.NintendoSwitch => 0,
                     _ => throw new ArgumentOutOfRangeException()
                 }, name: nameof(Footer));
@@ -186,6 +205,9 @@ namespace BinarySerializer.UbiArt
                 // Padded with a total length of 0x40000
                 if (settings.Game == Game.RaymanLegends && settings.Platform is Platform.WiiU or Platform.PlayStation3 or Platform.Xbox360)
                     s.SerializePadding(Offset + 0x40000 - s.CurrentPointer);
+                // Padded with a total length of 0x100000
+                else if (settings.Game == Game.RaymanLegends && settings.Platform is Platform.PSVita)
+                    s.SerializePadding(Offset + 0x100000 - s.CurrentPointer);
             });
         }
     }
