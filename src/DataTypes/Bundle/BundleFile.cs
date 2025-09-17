@@ -20,9 +20,9 @@
 
             long endOffset = s.CurrentFileOffset - Offset.FileOffset;
 
-            if (endOffset != BootHeader.BaseOffset)
+            if (endOffset != BootHeader.FilesStart)
                 s.SystemLogger?.LogWarning("Offset value {0} doesn't match file entry end offset {1}",
-                    BootHeader.BaseOffset, endOffset);
+                    BootHeader.FilesStart, endOffset);
         }
     }
 }

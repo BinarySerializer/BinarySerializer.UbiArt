@@ -14,20 +14,20 @@ namespace BinarySerializer.UbiArt
 
         public uint Pre_BundleVersion { get; set; }
 
-        public uint OffsetsCount { get; set; }
-        public uint FileSize { get; set; }
+        public uint Count { get; set; }
+        public uint OriginalSize { get; set; }
         public uint CompressedSize { get; set; }
-        public long TimeStamp { get; set; } // LastTimeWriteAccess
-        public DateTimeOffset TimeStampDateTimeOffset
+        public long FlushTime { get; set; } // LastTimeWriteAccess
+        public DateTimeOffset FlushTimeDateTimeOffset
         {
-            get => DateTimeOffset.FromFileTime(TimeStamp);
-            set => TimeStamp = value.ToFileTime();
+            get => DateTimeOffset.FromFileTime(FlushTime);
+            set => FlushTime = value.ToFileTime();
         }
-        public ulong[] Offsets { get; set; } // Can be multiple for less seeking
+        public ulong[] Positions { get; set; } // Can have multiple offsets for less seeking
         public Path Path { get; set; }
 
         public bool IsCompressed => CompressedSize != 0;
-        public uint ArchiveSize => IsCompressed ? CompressedSize : FileSize;
+        public uint ArchiveSize => IsCompressed ? CompressedSize : OriginalSize;
 
         #endregion
 
@@ -37,14 +37,14 @@ namespace BinarySerializer.UbiArt
         {
             // Serialize header values
             if (Pre_BundleVersion != 4)
-                OffsetsCount = s.Serialize<uint>(OffsetsCount, name: nameof(OffsetsCount));
+                Count = s.Serialize<uint>(Count, name: nameof(Count));
             else
-                OffsetsCount = 1;
+                Count = 1;
 
-            FileSize = s.Serialize<uint>(FileSize, name: nameof(FileSize));
+            OriginalSize = s.Serialize<uint>(OriginalSize, name: nameof(OriginalSize));
             CompressedSize = s.Serialize<uint>(CompressedSize, name: nameof(CompressedSize));
-            TimeStamp = s.Serialize<long>(TimeStamp, name: nameof(TimeStamp));
-            Offsets = s.SerializeArray<ulong>(Offsets, (int)OffsetsCount, name: nameof(Offsets));
+            FlushTime = s.Serialize<long>(FlushTime, name: nameof(FlushTime));
+            Positions = s.SerializeArray<ulong>(Positions, (int)Count, name: nameof(Positions));
 
             if (Pre_BundleVersion == 4)
                 return;
