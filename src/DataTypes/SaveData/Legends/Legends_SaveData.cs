@@ -296,7 +296,7 @@ namespace BinarySerializer.UbiArt
                     UplayDoneAction2 = s.SerializeUbiArtBool(UplayDoneAction2, name: nameof(UplayDoneAction2));
                     UplayDoneAction3 = s.SerializeUbiArtBool(UplayDoneAction3, name: nameof(UplayDoneAction3));
 
-                    if (s.GetRequiredSettings<UbiArtSettings>().Platform == Platform.NintendoSwitch)
+                    if (s.GetRequiredSettings<UbiArtSettings>().Platform is Platform.PlayStation4 or Platform.NintendoSwitch)
                         UplayDoneAction4 = s.SerializeUbiArtBool(UplayDoneAction4, name: nameof(UplayDoneAction4));
 
                     UplayDoneReward0 = s.SerializeUbiArtBool(UplayDoneReward0, name: nameof(UplayDoneReward0));
@@ -304,7 +304,7 @@ namespace BinarySerializer.UbiArt
                     UplayDoneReward2 = s.SerializeUbiArtBool(UplayDoneReward2, name: nameof(UplayDoneReward2));
                     UplayDoneReward3 = s.SerializeUbiArtBool(UplayDoneReward3, name: nameof(UplayDoneReward3));
 
-                    if (s.GetRequiredSettings<UbiArtSettings>().Platform == Platform.NintendoSwitch)
+                    if (s.GetRequiredSettings<UbiArtSettings>().Platform is Platform.PlayStation4 or Platform.NintendoSwitch)
                         UplayDoneReward4 = s.SerializeUbiArtBool(UplayDoneReward4, name: nameof(UplayDoneReward4));
                 }
 
@@ -352,7 +352,7 @@ namespace BinarySerializer.UbiArt
                 DoorUnlockDRCMessageRequired = s.SerializeUbiArtObjectArray<StringID>(DoorUnlockDRCMessageRequired, name: nameof(DoorUnlockDRCMessageRequired));
                 LuckyTicketRewardWorldName = s.SerializeObject<StringID>(LuckyTicketRewardWorldName, name: nameof(LuckyTicketRewardWorldName));
 
-                if (s.GetRequiredSettings<UbiArtSettings>().Platform == Platform.NintendoSwitch)
+                if (s.GetRequiredSettings<UbiArtSettings>().Platform is Platform.PlayStation4 or Platform.NintendoSwitch)
                     ShareScreenTutoFulfilled = s.SerializeUbiArtBool(ShareScreenTutoFulfilled, name: nameof(ShareScreenTutoFulfilled));
 
                 if (s.GetRequiredSettings<UbiArtSettings>().Platform != Platform.PSVita)
@@ -381,6 +381,8 @@ namespace BinarySerializer.UbiArt
             public DateTime Onlinedate { get; set; }
 
             public DateTime LocalDate { get; set; }
+
+            public byte[] PS4_Bytes { get; set; }
 
             public bool Sender { get; set; }
 
@@ -443,12 +445,16 @@ namespace BinarySerializer.UbiArt
 
             public override void SerializeImpl(SerializerObject s)
             {
+                UbiArtSettings settings = s.GetRequiredSettings<UbiArtSettings>();
+
                 Message_handle = s.Serialize<uint>(Message_handle, name: nameof(Message_handle));
                 Type = s.Serialize<uint>(Type, name: nameof(Type));
                 Onlinedate = s.SerializeObject<DateTime>(Onlinedate, name: nameof(Onlinedate));
                 LocalDate = s.SerializeObject<DateTime>(LocalDate, name: nameof(LocalDate));
 
-                if (s.GetRequiredSettings<UbiArtSettings>().Platform == Platform.NintendoSwitch)
+                if (settings.Platform == Platform.PlayStation4)
+                    PS4_Bytes = s.SerializeArray<byte>(PS4_Bytes, 16, name: nameof(PS4_Bytes));
+                else if (settings.Platform == Platform.NintendoSwitch)
                     Sender = s.SerializeUbiArtBool(Sender, name: nameof(Sender));
                 
                 PersistentSeconds = s.Serialize<uint>(PersistentSeconds, name: nameof(PersistentSeconds));
@@ -600,6 +606,8 @@ namespace BinarySerializer.UbiArt
         {
             public int Pid { get; set; }
 
+            public byte[] PS4_Bytes { get; set; }
+
             public string Name { get; set; }
 
             public uint StatusIcon { get; set; }
@@ -626,7 +634,17 @@ namespace BinarySerializer.UbiArt
 
             public override void SerializeImpl(SerializerObject s)
             {
-                Pid = s.Serialize<int>(Pid, name: nameof(Pid));
+                UbiArtSettings settings = s.GetRequiredSettings<UbiArtSettings>();
+
+                if (settings.Platform == Platform.PlayStation4)
+                {
+                    PS4_Bytes = s.SerializeArray<byte>(PS4_Bytes, 16, name: nameof(PS4_Bytes));
+                }
+                else
+                {
+                    Pid = s.Serialize<int>(Pid, name: nameof(Pid));
+                }
+
                 Name = s.SerializeObject<String8>(Name, name: nameof(Name));
                 StatusIcon = s.Serialize<uint>(StatusIcon, name: nameof(StatusIcon));
                 Country = s.Serialize<int>(Country, name: nameof(Country));
