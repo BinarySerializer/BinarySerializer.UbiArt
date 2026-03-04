@@ -38,10 +38,21 @@
 
         #region Just Dance
 
-        /// <summary>
-        /// Just Dance 2017
-        /// </summary>
+        JustDance2014,
+        JustDance2014JP,
+        JustDanceYoKaiWatch,
+        JustDance2015,
+        JustDance2016,
+        JustDance2016Demo,
         JustDance2017,
+        JustDance2017Demo,
+        JustDance2018,
+        JustDance2018Demo,
+        JustDance2019,
+        JustDance2019Demo,
+        JustDance2020,
+        JustDance2021,
+        JustDance2022,
 
         #endregion
 
