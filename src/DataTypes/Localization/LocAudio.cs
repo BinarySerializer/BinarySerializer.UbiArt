@@ -7,9 +7,9 @@
         where UAString : UbiArtString, new()
     {
         /// <summary>
-        /// Unknown value
+        /// The ID (always 0 in the file data)
         /// </summary>
-        public uint Unknown0 { get; set; }
+        public uint LocalisationId { get; set; }
 
         /// <summary>
         /// The audio file
@@ -17,15 +17,15 @@
         public UAString AudioFile { get; set; }
 
         /// <summary>
-        /// Unknown value
+        /// The audio volume
         /// </summary>
-        public uint Unknown1 { get; set; }
+        public float AudioVolume { get; set; }
 
         public override void SerializeImpl(SerializerObject s)
         {
-            Unknown0 = s.Serialize<uint>(Unknown0, name: nameof(Unknown0));
+            LocalisationId = s.Serialize<uint>(LocalisationId, name: nameof(LocalisationId));
             AudioFile = s.SerializeObject<UAString>(AudioFile, name: nameof(AudioFile));
-            Unknown1 = s.Serialize<uint>(Unknown1, name: nameof(Unknown1));
+            AudioVolume = s.Serialize<float>(AudioVolume, name: nameof(AudioVolume));
         }
     }
 }
