@@ -175,8 +175,14 @@ namespace BinarySerializer.UbiArt
 
         #region Public Methods
 
-        public byte[] Untile(byte[] imageData, bool swapBytes)
+        public byte[] Untile(byte[] imageData)
         {
+            // Swap endian if block compressed
+            bool swapBytes = DataFormat is 
+                GPUTEXTUREFORMAT.GPUTEXTUREFORMAT_DXT1 or 
+                GPUTEXTUREFORMAT.GPUTEXTUREFORMAT_DXT2_3 or 
+                GPUTEXTUREFORMAT.GPUTEXTUREFORMAT_DXT4_5;
+
             byte[] imgData = swapBytes ? new byte[imageData.Length] : imageData;
 
             if (swapBytes)
