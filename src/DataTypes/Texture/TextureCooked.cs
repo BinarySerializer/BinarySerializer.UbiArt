@@ -36,7 +36,7 @@
         // textures on Xbox 360 are mapped differently. This allows a texture with alpha to be 24-bit if it can re-use channels.
         // 0 = Alpha channel, 1 = Red channel, 2 = Green channel, 3 = Blue channel, 4 = 0x00, 5 = 0xFF
         public uint Remap { get; set; } = 0x00010203;
-        public bool IsRemapped => Remap != 0x00010203;
+        public bool IsRemapped => Remap != 0x00010203 && Remap != 0x04010203; // PS3 uses 0x04010203 for 24bpp textures
         public int Remap_A => BitHelpers.ExtractBits((int)Remap, 8, 24);
         public int Remap_R => BitHelpers.ExtractBits((int)Remap, 8, 16);
         public int Remap_G => BitHelpers.ExtractBits((int)Remap, 8, 8);
