@@ -75,8 +75,22 @@ namespace BinarySerializer.UbiArt
         /// <param name="s">The serializer</param>
         public override void SerializeImpl(SerializerObject s)
         {
-            // Just Dance reads the values in reverse
-            if (s.GetRequiredSettings<UbiArtSettings>().Game == Game.JustDance2017)
+            UbiArtSettings settings = s.GetRequiredSettings<UbiArtSettings>();
+
+            // Just Dance reads the values in reverse except for Just Dance 2014, which reads them in the same order as the other games
+            if (settings.Game is
+                Game.JustDance2015 or
+                Game.JustDance2016Demo or
+                Game.JustDance2016 or
+                Game.JustDance2017Demo or
+                Game.JustDance2017 or
+                Game.JustDance2018Demo or
+                Game.JustDance2018 or
+                Game.JustDance2019Demo or
+                Game.JustDance2019 or
+                Game.JustDance2020 or
+                Game.JustDance2021 or
+                Game.JustDance2022)
             {
                 // Read the path
                 FileName = s.SerializeObject<String8>(FileName, name: nameof(FileName));
@@ -91,7 +105,7 @@ namespace BinarySerializer.UbiArt
 
             StringID = s.SerializeObject<StringID>(StringID, name: nameof(StringID));
 
-            if (s.GetRequiredSettings<UbiArtSettings>().Game != Game.RaymanOrigins)
+            if (settings.Game != Game.RaymanOrigins)
                 Flags = s.Serialize<uint>(Flags, name: nameof(Flags));
         }
 
